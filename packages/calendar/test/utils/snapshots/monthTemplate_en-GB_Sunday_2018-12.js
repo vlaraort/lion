@@ -1,6 +1,6 @@
 const html = strings => strings[0];
 
-export const monthTemplateSnapshot = html`
+export default html`
   <table aria-labelledby="month_and_year" aria-readonly="true" class="calendar__grid" role="grid">
     <thead id="calendar__thead">
       <tr>
