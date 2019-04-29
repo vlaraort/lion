@@ -1,13 +1,9 @@
-import { storiesOf, html } from '@open-wc/storybook';
-import {
-  maxDateValidator,
-  minDateValidator,
-  minMaxDateValidator,
-} from '../../validate/validators.js';
+import { storiesOf, html } from '@open-wc/demoing-storybook';
+import { maxDateValidator, minDateValidator, minMaxDateValidator } from '@lion/validate';
 
 import '../lion-input-datepicker.js';
 
-storiesOf('Forms|<lion-input-datepicker>', module)
+storiesOf('Forms|Input Datepicker', module)
   .add(
     'Default',
     () => html`

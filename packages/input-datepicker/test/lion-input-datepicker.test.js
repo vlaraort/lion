@@ -3,15 +3,18 @@
 // TODO: enable linting again when proper imports can be done
 /* eslint-disable */
 import { expect, fixture } from '@open-wc/testing';
-import { localizeTearDown } from '../../localize/test-helpers.js';
-import { html } from '../../core/lit-html.js';
-import { ModalDialogController } from '../../overlays/ModalDialogController.js';
+import { localizeTearDown } from '@lion/localize/test-helpers.js';
+import { html } from '@lion/core';
+import { ModalDialogController } from '@lion/overlays';
 import {
-  enabledDatesValidator,
+  // enabledDatesValidator,
   maxDateValidator,
   minDateValidator,
   minMaxDateValidator,
-} from '../../validate/validators.js';
+} from '@lion/validate';
+
+const enabledDatesValidator = () => {}; // TODO: add to '@lion/validate'
+
 class DatepickerInputObject {
   constructor(el) {
     this.el = el;
@@ -73,23 +76,26 @@ describe('<lion-input-datepicker>', () => {
       );
     });
 
-    it('has a default title of {month} {day}, {year}', async () => {
+    it('has a default title based on input label', async () => {
       const elObj = new DatepickerInputObject(
         await fixture(
           html`
-            <lion-input-datepicker .modelValue="${new Date('2020-02-15')}"></lion-input-datepicker>
+            <lion-input-datepicker
+              label="Pick your date"
+              .modelValue="${new Date('2020-02-15')}"
+            ></lion-input-datepicker>
           `,
         ),
       );
       expect(elObj.overlay().querySelector('calendar-overlay__title').textContent).to.equal(
-        'February 15, 2020',
+        'Pick your date',
       );
     });
 
-    it('can have a custom heading title', async () => {
+    it('can have a custom heading', async () => {
       const el = await fixture(
         html`
-          <lion-input-datepicker></lion-input-datepicker>
+          <lion-input-datepicker heading="foo"></lion-input-datepicker>
         `,
       );
       const elObj = new DatepickerInputObject(el);
@@ -128,7 +134,35 @@ describe('<lion-input-datepicker>', () => {
       expect(el.overlayCtrl.isShown).to.equal(false);
     });
 
+    it('syncs modelValue with lion-calendar', async () => {
+      const myDate = new Date('2019/06/15');
+      const myOtherDate = new Date('2003/08/18');
+      const el = await fixture(
+        html`
+          <lion-input-datepicker .modelValue="${myDate}"></lion-input-datepicker>
+        `,
+      );
+      const elObj = new DatepickerInputObject(el);
+      expect(elObj.calendar().selectedDate).to.equal(myDate);
+      elObj.calendar().selectedDate = myOtherDate;
+      expect(el.modelValue).to.equal(myOtherDate);
+    });
+
+    it('closes the calendar overlay(<lion-datepicker>) on "selected-changed"', async () => {});
+
+    it('closes the calendar on [esc] key', async () => {});
+
     describe('Accessibility', () => {
+      it('has a heading of level 1', async () => {
+        const el = await fixture(
+          html`
+            <lion-input-datepicker heading="foo"></lion-input-datepicker>
+          `,
+        );
+        const elObj = new DatepickerInputObject(el);
+        expect(elObj.overlay().querySelector('calendar-overlay__title').tagName).to.equal('H1');
+      });
+
       it('adds accessible label to invoker button', async () => {
         const el = await fixture(
           html`
@@ -210,23 +244,5 @@ describe('<lion-input-datepicker>', () => {
        * - min/max attr (like platform has): could be added in future if observers needed
        */
     });
-
-    it('syncs modelValue with lion-calendar', async () => {
-      const myDate = new Date('2019/06/15');
-      const myOtherDate = new Date('2003/08/18');
-      const el = await fixture(
-        html`
-          <lion-input-datepicker .modelValue="${myDate}"></lion-input-datepicker>
-        `,
-      );
-      const elObj = new DatepickerInputObject(el);
-      expect(elObj.calendar().selectedDate).to.equal(myDate);
-      elObj.calendar().selectedDate = myOtherDate;
-      expect(el.modelValue).to.equal(myOtherDate);
-    });
-
-    it('closes the calendar overlay(<lion-datepicker>) on "selected-changed"', async () => {});
-
-    it('closes the calendar on [esc] key', async () => {});
   });
 });
