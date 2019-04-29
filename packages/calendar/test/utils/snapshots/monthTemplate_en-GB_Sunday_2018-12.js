@@ -22,7 +22,7 @@ export default html`
         <th aria-label="Friday" id="weekday6" scope="col">
           Fri
         </th>
-        <th aria-label="Saturaday" id="weekday7" scope="col">
+        <th aria-label="Saturday" id="weekday7" scope="col">
           Sat
         </th>
       </tr>
