@@ -1,3 +1,5 @@
+import { createDay } from './createDay.js';
+
 export function createWeek(date, { firstDayOfWeek = 0 } = {}) {
   if (Object.prototype.toString.call(date) !== '[object Date]') {
     throw new Error('invalid date provided');
@@ -17,10 +19,11 @@ export function createWeek(date, { firstDayOfWeek = 0 } = {}) {
     if (i !== 0) {
       weekStartDate.setDate(weekStartDate.getDate() + 1);
     }
-    week.days.push({
-      date: new Date(weekStartDate),
-      startOfWeek: i === 0,
-    });
+    week.days.push(
+      createDay(new Date(weekStartDate), {
+        startOfWeek: i === 0,
+      }),
+    );
   }
   return week;
 }
