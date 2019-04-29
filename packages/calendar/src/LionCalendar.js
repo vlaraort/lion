@@ -1,9 +1,10 @@
 import { html } from '@lion/core';
 import { LionLitElement } from '@lion/core/src/LionLitElement.js';
 import { localize, getWeekdayNames, getMonthNames } from '@lion/localize';
-import { createMonth } from './utils/generators.js';
-import { headerTemplate, monthTemplate } from './utils/templates.js';
-import { dayPreProcessor } from './utils/preProcessors.js';
+import { createMonth } from './utils/createMonth.js';
+import { headerTemplate } from './utils/headerTemplate.js';
+import { monthTemplate } from './utils/monthTemplate.js';
+import { dayPreprocessor } from './utils/dayPreprocessor.js';
 import { calendarStyles } from './calendarStyles.js';
 
 /**
@@ -148,7 +149,7 @@ export class LionCalendar extends LionLitElement {
           focusDate: this.focusDate,
           weekdaysAbbreviations: this._i18n.weekdaysAbbreviations,
           weekdays: this._i18n.weekdays,
-          dayPreProcessor,
+          dayPreprocessor,
         })}
       </div>
     `;
