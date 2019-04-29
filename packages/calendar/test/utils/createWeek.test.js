@@ -15,13 +15,13 @@ describe('createWeek', () => {
     expect(compareWeek(createWeek(new Date('2018-12-30')))).to.deep.equal(
       compareWeek({
         days: [
-          { date: new Date('2018-12-30'), startOfWeek: true },
-          { date: new Date('2018-12-31'), startOfWeek: false },
-          { date: new Date('2019-01-01'), startOfWeek: false },
-          { date: new Date('2019-01-02'), startOfWeek: false },
-          { date: new Date('2019-01-03'), startOfWeek: false },
-          { date: new Date('2019-01-04'), startOfWeek: false },
-          { date: new Date('2019-01-05'), startOfWeek: false },
+          { date: new Date('2018-12-30'), selected: false, startOfWeek: true },
+          { date: new Date('2018-12-31'), selected: false, startOfWeek: false },
+          { date: new Date('2019-01-01'), selected: false, startOfWeek: false },
+          { date: new Date('2019-01-02'), selected: false, startOfWeek: false },
+          { date: new Date('2019-01-03'), selected: false, startOfWeek: false },
+          { date: new Date('2019-01-04'), selected: false, startOfWeek: false },
+          { date: new Date('2019-01-05'), selected: false, startOfWeek: false },
         ],
       }),
     );
@@ -32,13 +32,13 @@ describe('createWeek', () => {
     expect(compareWeek(createWeek(new Date('2018-12-31'), { firstDayOfWeek: 1 }))).to.deep.equal(
       compareWeek({
         days: [
-          { date: new Date('2018-12-31'), startOfWeek: true },
-          { date: new Date('2019-01-01'), startOfWeek: false },
-          { date: new Date('2019-01-02'), startOfWeek: false },
-          { date: new Date('2019-01-03'), startOfWeek: false },
-          { date: new Date('2019-01-04'), startOfWeek: false },
-          { date: new Date('2019-01-05'), startOfWeek: false },
-          { date: new Date('2019-01-06'), startOfWeek: false },
+          { date: new Date('2018-12-31'), selected: false, startOfWeek: true },
+          { date: new Date('2019-01-01'), selected: false, startOfWeek: false },
+          { date: new Date('2019-01-02'), selected: false, startOfWeek: false },
+          { date: new Date('2019-01-03'), selected: false, startOfWeek: false },
+          { date: new Date('2019-01-04'), selected: false, startOfWeek: false },
+          { date: new Date('2019-01-05'), selected: false, startOfWeek: false },
+          { date: new Date('2019-01-06'), selected: false, startOfWeek: false },
         ],
       }),
     );
