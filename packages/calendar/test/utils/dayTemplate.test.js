@@ -1,0 +1,24 @@
+/* eslint-disable no-unused-expressions */
+import { expect, fixture } from '@open-wc/testing';
+
+import { createDay } from '../../src/utils/createDay.js';
+import { dayTemplate } from '../../src/utils/dayTemplate.js';
+
+describe('dayTemplate', () => {
+  it('renders day cell', async () => {
+    const day = createDay(new Date('2019-04-19'));
+    const el = await fixture(dayTemplate(day));
+    expect(el).dom.to.equal(`
+      <td class="calendar__day">
+        <button
+          class="calendar__day-button"
+          tabindex="-1"
+          aria-label="19"
+          aria-selected="false"
+        >
+          19
+        </button>
+      </td>
+    `);
+  });
+});
