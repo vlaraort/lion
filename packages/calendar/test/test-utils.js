@@ -7,16 +7,16 @@ export const keyCodes = {
   down: 40,
 };
 
-export const weekdayAbbreviations = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
-export const weekdays = [
-  'Monday',
-  'Tuesday',
-  'Wednesday',
-  'Thursday',
-  'Friday',
-  'Saturday',
-  'Sunday',
-];
+export const weekdaysAbbreviations = {
+  'en-GB': {
+    Sunday: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+  },
+};
+export const weekdays = {
+  'en-GB': {
+    Sunday: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+  },
+};
 
 /**
  * Abstraction around calendar day DOM structure,
@@ -66,7 +66,7 @@ export class DayObject {
   get weekday() {
     const weekdayEls = this.el.closest('tr').querySelectorAll('.calendar__day');
     const dayIndex = weekdayEls.indexOf(this.el);
-    return weekdayAbbreviations[dayIndex];
+    return weekdaysAbbreviations['en-GB'].Sunday[dayIndex];
   }
 }
 
