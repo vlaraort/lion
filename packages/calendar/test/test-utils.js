@@ -147,10 +147,10 @@ export class CalendarObject {
       const dayNumber = i + 1;
       let shouldApply = true;
       if (filter !== undefined) {
-        shouldApply = filter instanceof Array ? dayNumber.includes(filter) : filter(dayNumber);
+        shouldApply = filter instanceof Array ? filter.includes(dayNumber) : filter(dayNumber);
       }
       // for instance, should be 'disabled' for the 15th and 20th day
-      return condition(dayObj) && shouldApply;
+      return !shouldApply || (condition(dayObj) && shouldApply);
     });
   }
 

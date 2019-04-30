@@ -128,6 +128,7 @@ export class LionCalendar extends LionLitElement {
     let day = _day;
     day.otherMonth = day.date.getMonth() !== this.focusDate.getMonth();
     day.selected = isSameDay(day.date, this.selectedDate);
+    day.focused = isSameDay(day.date, this.focusDate);
     // call enabledDays
     day.disabled = !this.enabledDates(day.date);
 
