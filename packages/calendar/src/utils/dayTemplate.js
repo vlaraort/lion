@@ -3,7 +3,12 @@ import { html, classMap } from '@lion/core';
 export function dayTemplate(day) {
   const classes = { calendar__day: !day.otherMonth, 'calendar__day--other-month': day.otherMonth };
   return html`
-    <td class=${classMap(classes)} .selected=${day.selected} ?disabled=${day.disabled}>
+    <td
+      class=${classMap(classes)}
+      ?selected=${day.selected}
+      ?disabled=${day.disabled}
+      ?focused=${day.focused}
+    >
       <button
         class="calendar__day-button"
         tabindex=${day.selected ? '0' : '-1'}

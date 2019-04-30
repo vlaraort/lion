@@ -332,7 +332,7 @@ describe('<lion-calendar>', () => {
       it('adds "selected" modifier to selected date', async () => {
         const el = await fixture(
           html`
-            <lion-calendar .selectedDate="${new Date('2000-12-12')}"></lion-calendar>
+            <lion-calendar .selectedDate="${new Date('2000/12/12')}"></lion-calendar>
           `,
         );
         const elObj = new CalendarObject(el);
