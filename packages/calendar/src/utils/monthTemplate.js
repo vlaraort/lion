@@ -1,10 +1,7 @@
 import { html } from '@lion/core';
 import { dayTemplate } from './dayTemplate.js';
 
-export function monthTemplate(
-  month,
-  { weekdaysAbbreviations, weekdays, dayPreprocessor, focusDate } = {},
-) {
+export function monthTemplate(month, { weekdaysAbbreviations, weekdays } = {}) {
   return html`
     <table role="grid" aria-readonly="true" class="calendar__grid" aria-labelledby="month_and_year">
       <thead id="calendar__thead">
@@ -22,7 +19,7 @@ export function monthTemplate(
         ${month.weeks.map(
           week => html`
             <tr>
-              ${week.days.map(day => dayTemplate(dayPreprocessor(day, focusDate)))}
+              ${week.days.map(day => dayTemplate(day))}
             </tr>
           `,
         )}

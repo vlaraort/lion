@@ -5,10 +5,10 @@ import sinon from 'sinon';
 import { keyDownOn } from '@polymer/iron-test-helpers/mock-interactions.js';
 
 import { html } from '@lion/core';
-import { localize } from '@lion/localize';
+import { localize, getWeekdayNames } from '@lion/localize';
 import { localizeTearDown } from '@lion/localize/test-helpers.js';
 
-import { CalendarObject, DayObject, keyCodes, weekdayAbbreviations } from './test-utils.js';
+import { CalendarObject, DayObject, keyCodes } from './test-utils.js';
 
 import '../lion-calendar.js';
 
@@ -315,7 +315,13 @@ describe('<lion-calendar>', () => {
         `,
       );
       const elObj = new CalendarObject(el);
-      expect(elObj.weekDayHeaders().map(h => h.textContent)).to.eql(weekdayAbbreviations);
+      expect(elObj.weekDayHeaders().map(h => h.textContent)).to.eql(
+        getWeekdayNames({
+          locale: localize.locale,
+          style: 'short',
+          firstDayOfWeek: 1,
+        }),
+      );
     });
 
     describe('Day view', () => {

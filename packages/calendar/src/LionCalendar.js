@@ -4,7 +4,6 @@ import { localize, getWeekdayNames, getMonthNames } from '@lion/localize';
 import { createMonth } from './utils/createMonth.js';
 import { headerTemplate } from './utils/headerTemplate.js';
 import { monthTemplate } from './utils/monthTemplate.js';
-import { dayPreprocessor } from './utils/dayPreprocessor.js';
 import { calendarStyles } from './calendarStyles.js';
 
 /**
@@ -33,7 +32,7 @@ export class LionCalendar extends LionLitElement {
       /**
        * Enabled dates function that is applied for every monthday within the active view
        */
-      enabledDates: { type: Function },
+      dayPreProcessor: { type: Function },
 
       /**
        * Weekday that will be displayed in first column of month grid.
@@ -63,12 +62,15 @@ export class LionCalendar extends LionLitElement {
 
   constructor() {
     super();
-
-    this._firstTimeUpdated = true;
-
     // Defaults
+    this.minDate = null;
+    this.maxDate = null;
+    this.dayPreProcessor = day => day;
     this.firstDayOfWeek = 0;
     this.weekdayHeaderNotation = 'short';
+    this.focusDate = this.selectedDate || new Date();
+
+    this._firstTimeUpdated = true;
 
     this._i18n = {
       weekdays: getWeekdayNames({
@@ -84,13 +86,33 @@ export class LionCalendar extends LionLitElement {
       months: getMonthNames({ locale: this.locale || localize.locale }),
     };
 
-    this.focusDate = this.selectedDate || new Date();
-
     // Triggers render function
-    this._monthsData = createMonth(this.focusDate, { firstDayOfWeek: this.firstDayOfWeek });
+    this._monthsData = this.createMonth();
 
     // TODO: what is prependZero?
     this.prependZero = true;
+  }
+
+  createMonth() {
+    const month = createMonth(this.focusDate, { firstDayOfWeek: this.firstDayOfWeek });
+    month.weeks.forEach((week, weeki) => {
+      week.days.forEach((day, dayi) => {
+        // eslint-disable-next-line no-unused-vars
+        let currentDay = month.weeks[weeki].days[dayi];
+        currentDay = this._dayPreprocessor(currentDay);
+      });
+    });
+    return month;
+  }
+
+  _dayPreprocessor(day) {
+    let processedDay = day;
+    if (day.date.getMonth() !== this.focusDate.getMonth()) {
+      processedDay.disabled = true;
+    }
+    // call custom preProcessor
+    processedDay = this.dayPreProcessor(processedDay);
+    return processedDay;
   }
 
   nextMonth() {
@@ -108,7 +130,7 @@ export class LionCalendar extends LionLitElement {
       this._firstTimeUpdated = false;
     } else if (c.has('minDate') || c.has('maxDate') || c.has('focusDate')) {
       // Gather updated month view; triggers a rerender
-      this._monthsData = createMonth(this.focusDate, { firstDayOfWeek: this.firstDayOfWeek });
+      this._monthsData = this.createMonth();
     }
   }
 
@@ -149,7 +171,6 @@ export class LionCalendar extends LionLitElement {
           focusDate: this.focusDate,
           weekdaysAbbreviations: this._i18n.weekdaysAbbreviations,
           weekdays: this._i18n.weekdays,
-          dayPreprocessor,
         })}
       </div>
     `;

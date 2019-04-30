@@ -30,68 +30,32 @@ export default html`
     <tbody>
       <tr>
         <td class="calendar__day">
-          <button
-            aria-label="25"
-            aria-selected="false"
-            class="calendar__day-button"
-            tabindex="-1"
-            disabled
-          >
+          <button aria-label="25" aria-selected="false" class="calendar__day-button" tabindex="-1">
             25
           </button>
         </td>
         <td class="calendar__day">
-          <button
-            aria-label="26"
-            aria-selected="false"
-            class="calendar__day-button"
-            tabindex="-1"
-            disabled
-          >
+          <button aria-label="26" aria-selected="false" class="calendar__day-button" tabindex="-1">
             26
           </button>
         </td>
         <td class="calendar__day">
-          <button
-            aria-label="27"
-            aria-selected="false"
-            class="calendar__day-button"
-            tabindex="-1"
-            disabled
-          >
+          <button aria-label="27" aria-selected="false" class="calendar__day-button" tabindex="-1">
             27
           </button>
         </td>
         <td class="calendar__day">
-          <button
-            aria-label="28"
-            aria-selected="false"
-            class="calendar__day-button"
-            tabindex="-1"
-            disabled
-          >
+          <button aria-label="28" aria-selected="false" class="calendar__day-button" tabindex="-1">
             28
           </button>
         </td>
         <td class="calendar__day">
-          <button
-            aria-label="29"
-            aria-selected="false"
-            class="calendar__day-button"
-            tabindex="-1"
-            disabled
-          >
+          <button aria-label="29" aria-selected="false" class="calendar__day-button" tabindex="-1">
             29
           </button>
         </td>
         <td class="calendar__day">
-          <button
-            aria-label="30"
-            aria-selected="false"
-            class="calendar__day-button"
-            tabindex="-1"
-            disabled
-          >
+          <button aria-label="30" aria-selected="false" class="calendar__day-button" tabindex="-1">
             30
           </button>
         </td>
@@ -261,57 +225,27 @@ export default html`
           </button>
         </td>
         <td class="calendar__day">
-          <button
-            aria-label="1"
-            aria-selected="false"
-            class="calendar__day-button"
-            tabindex="-1"
-            disabled
-          >
+          <button aria-label="1" aria-selected="false" class="calendar__day-button" tabindex="-1">
             1
           </button>
         </td>
         <td class="calendar__day">
-          <button
-            aria-label="2"
-            aria-selected="false"
-            class="calendar__day-button"
-            tabindex="-1"
-            disabled
-          >
+          <button aria-label="2" aria-selected="false" class="calendar__day-button" tabindex="-1">
             2
           </button>
         </td>
         <td class="calendar__day">
-          <button
-            aria-label="3"
-            aria-selected="false"
-            class="calendar__day-button"
-            tabindex="-1"
-            disabled
-          >
+          <button aria-label="3" aria-selected="false" class="calendar__day-button" tabindex="-1">
             3
           </button>
         </td>
         <td class="calendar__day">
-          <button
-            aria-label="4"
-            aria-selected="false"
-            class="calendar__day-button"
-            tabindex="-1"
-            disabled
-          >
+          <button aria-label="4" aria-selected="false" class="calendar__day-button" tabindex="-1">
             4
           </button>
         </td>
         <td class="calendar__day">
-          <button
-            aria-label="5"
-            aria-selected="false"
-            class="calendar__day-button"
-            tabindex="-1"
-            disabled
-          >
+          <button aria-label="5" aria-selected="false" class="calendar__day-button" tabindex="-1">
             5
           </button>
         </td>

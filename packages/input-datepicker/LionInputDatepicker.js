@@ -1,4 +1,5 @@
 /* eslint-disable no-underscore-dangle */
+/* eslint-disable */
 
 import { LionInputDate } from '../input-date/LionInputDate.js';
 import { html, render } from '../core/lit-html.js';
