@@ -32,6 +32,8 @@ export class LionCalendar extends LionLitElement {
       /**
        * Enabled dates function that is applied for every monthday within the active view
        */
+      enabledDates: { type: Function },
+
       dayPreprocessor: { type: Function },
 
       /**
@@ -69,6 +71,7 @@ export class LionCalendar extends LionLitElement {
     this.minDate = null;
     this.maxDate = null;
     this.dayPreprocessor = day => day;
+    this.enabledDates = () => true;
     this.firstDayOfWeek = 0;
     this.weekdayHeaderNotation = 'short';
     this.locale = localize.locale;
@@ -115,19 +118,23 @@ export class LionCalendar extends LionLitElement {
     return month;
   }
 
-  _dayPreprocessor(day) {
-    let processedDay = day;
-    processedDay.otherMonth = day.date.getMonth() !== this.focusDate.getMonth();
-    processedDay.selected = isSameDay(day.date, this.selectedDate);
+  _dayPreprocessor(_day) {
+    let day = _day;
+    day.otherMonth = day.date.getMonth() !== this.focusDate.getMonth();
+    day.selected = isSameDay(day.date, this.selectedDate);
+    // call enabledDays
+    day.disabled = !this.enabledDates(day.date);
+
     if (this.minDate && day.date < this.minDate) {
-      processedDay.disabled = true;
+      day.disabled = true;
     }
     if (this.maxDate && day.date > this.maxDate) {
-      processedDay.disabled = true;
+      day.disabled = true;
     }
+
     // call custom dayPreprocessor
-    processedDay = this.dayPreprocessor(processedDay);
-    return processedDay;
+    day = this.dayPreprocessor(day);
+    return day;
   }
 
   nextMonth() {
