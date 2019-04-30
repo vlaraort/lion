@@ -110,7 +110,7 @@ describe('<lion-calendar>', () => {
         <lion-calendar @selected-date-changed="${() => mySpy()}"></lion-calendar>
       `);
       expect(mySpy.called).to.equal(false);
-      el.selectedDate = new Date('2000-12-12');
+      el.selectedDate = new Date('2000/12/12');
       expect(mySpy.called).to.equal(true);
     });
 
@@ -118,14 +118,14 @@ describe('<lion-calendar>', () => {
       it('disables all days before "minDate" property', async () => {
         const el = await fixture(html`
           <lion-calendar
-            .selectedDate="${new Date('2000-12-31')}"
-            .minDate="${new Date('2000-12-09')}"
+            .selectedDate="${new Date('2000/12/31')}"
+            .minDate="${new Date('2000/12/09')}"
           >
           </lion-calendar>
         `);
         const elObj = new CalendarObject(el);
-        expect(elObj.dayObj(1).disabled).to.equal(false);
-        [].forEach(elObj.days(), (d, i) => {
+        expect(elObj.dayObj(15).disabled).to.equal(false);
+        elObj.days().forEach((d, i) => {
           const shouldBeDisabled = i < 8;
           expect(new DayObject(d).disabled).to.equal(shouldBeDisabled);
         });

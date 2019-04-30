@@ -117,8 +117,11 @@ export class LionCalendar extends LionLitElement {
 
   _dayPreprocessor(day) {
     let processedDay = day;
-    processedDay.disabled = day.date.getMonth() !== this.focusDate.getMonth();
+    processedDay.otherMonth = day.date.getMonth() !== this.focusDate.getMonth();
     processedDay.selected = isSameDay(day.date, this.selectedDate);
+    if (day.date < this.minDate) {
+      processedDay.disabled = true;
+    }
     // call custom dayPreprocessor
     processedDay = this.dayPreprocessor(processedDay);
     return processedDay;
