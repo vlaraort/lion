@@ -7,7 +7,7 @@ export const keyCodes = {
   down: 40,
 };
 
-export const weekdaysAbbreviations = {
+export const weekdaysShort = {
   'en-GB': {
     Sunday: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
   },
@@ -66,7 +66,7 @@ export class DayObject {
   get weekday() {
     const weekdayEls = this.el.closest('tr').querySelectorAll('.calendar__day');
     const dayIndex = weekdayEls.indexOf(this.el);
-    return weekdaysAbbreviations['en-GB'].Sunday[dayIndex];
+    return weekdaysShort['en-GB'].Sunday[dayIndex];
   }
 }
 

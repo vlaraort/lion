@@ -3,7 +3,7 @@ import { expect, fixture } from '@open-wc/testing';
 
 import { createMonth } from '../../src/utils/createMonth.js';
 import { monthTemplate } from '../../src/utils/monthTemplate.js';
-import { weekdaysAbbreviations, weekdays } from '../test-utils.js';
+import { weekdaysShort, weekdays } from '../test-utils.js';
 
 // eslint-disable-next-line camelcase
 import snapshot_enGB_Sunday_201812 from './snapshots/monthTemplate_en-GB_Sunday_2018-12.js';
@@ -15,7 +15,7 @@ describe('monthTemplate', () => {
     const el = await fixture(
       monthTemplate(month, {
         focusDate: date,
-        weekdaysAbbreviations: weekdaysAbbreviations['en-GB'].Sunday,
+        weekdaysShort: weekdaysShort['en-GB'].Sunday,
         weekdays: weekdays['en-GB'].Sunday,
       }),
     );
