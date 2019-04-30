@@ -188,7 +188,7 @@ describe('<lion-calendar>', () => {
           `,
         );
         const elObj = new CalendarObject(el);
-        expect(elObj.monthHeading().textContent).to.equal('December 2000');
+        expect(elObj.monthHeading()).lightDom.to.equal('December 2000');
       });
 
       it('updates the secondary title when the displayed month/year changes', async () => {
@@ -199,7 +199,8 @@ describe('<lion-calendar>', () => {
         );
         const elObj = new CalendarObject(el);
         el.selectedDate = new Date('1999-10-12');
-        expect(elObj.monthHeading().textContent).to.equal('October 1999');
+        await el.updateCompleted;
+        expect(elObj.monthHeading()).lightDom.to.equal('October 1999');
       });
 
       describe('Accessibility', () => {
@@ -225,47 +226,47 @@ describe('<lion-calendar>', () => {
         );
         const elObj = new CalendarObject(el);
         expect(elObj.prevMonthButton()).not.to.equal(null);
-        expect(elObj.monthHeading().textContent).to.equal('January 2001');
+        expect(elObj.monthHeading()).lightDom.to.equal('January 2001');
 
         elObj.prevMonthButton().click();
         await el.updateCompleted;
-        expect(elObj.monthHeading().textContent).to.equal('December 2000');
+        expect(elObj.monthHeading()).lightDom.to.equal('December 2000');
 
         elObj.prevMonthButton().click();
         await el.updateCompleted;
-        expect(elObj.monthHeading().textContent).to.equal('November 2000');
+        expect(elObj.monthHeading()).lightDom.to.equal('November 2000');
       });
 
       it('has a button for navigation to next month', async () => {
         const el = await fixture(
           html`
-            <lion-calendar .selectedDate="${new Date('2000-12-12')}"></lion-calendar>
+            <lion-calendar .selectedDate="${new Date('2000/12/12')}"></lion-calendar>
           `,
         );
         const elObj = new CalendarObject(el);
         expect(elObj.nextMonthButton()).not.to.equal(null);
-        expect(elObj.monthHeading().textContent).to.equal('December 2000');
+        expect(elObj.monthHeading()).lightDom.to.equal('December 2000');
 
         elObj.nextMonthButton().click();
         await el.updateCompleted;
-        expect(elObj.monthHeading().textContent).to.equal('January 2001');
+        expect(elObj.monthHeading()).lightDom.to.equal('January 2001');
 
         elObj.nextMonthButton().click();
         await el.updateCompleted;
-        expect(elObj.monthHeading().textContent).to.equal('February 2001');
+        expect(elObj.monthHeading()).lightDom.to.equal('February 2001');
       });
 
       it('disables prevMonthButton and nextMonthButton based on disabled days accordingly', async () => {
         const el = await fixture(html`
-          <lion-calendar .selectedDate="${new Date('2000-12-12')}"></lion-calendar>
+          <lion-calendar .selectedDate="${new Date('2000/12/12')}"></lion-calendar>
         `);
         const elObj = new CalendarObject(el);
-        expect(elObj.monthHeading().textContent).to.equal('December 2000');
+        expect(elObj.monthHeading()).lightDom.to.equal('December 2000');
         expect(elObj.prevMonthButton().hasAttribute('disabled')).to.equal(false);
         expect(elObj.nextMonthButton().hasAttribute('disabled')).to.equal(false);
 
-        el.minDate = new Date('2000-12-01');
-        el.maxDate = new Date('2000-12-31');
+        el.minDate = new Date('2000/12/01');
+        el.maxDate = new Date('2000/12/31');
         await el.updateCompleted;
 
         expect(elObj.prevMonthButton().hasAttribute('disabled')).to.equal(true);
@@ -273,11 +274,11 @@ describe('<lion-calendar>', () => {
 
         elObj.prevMonthButton().click();
         await el.updateCompleted;
-        expect(elObj.monthHeading().textContent).to.equal('December 2000');
+        expect(elObj.monthHeading()).lightDom.to.equal('December 2000');
 
         elObj.prevMonthButton().click();
         await el.updateCompleted;
-        expect(elObj.monthHeading().textContent).to.equal('December 2000');
+        expect(elObj.monthHeading()).lightDom.to.equal('December 2000');
       });
 
       describe('Accessibility', () => {

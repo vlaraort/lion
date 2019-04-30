@@ -88,15 +88,15 @@ export class CalendarObject {
   }
 
   monthHeading() {
-    return this.el.shadowRoot.querySelector('.calendar__header .calender__month-heading');
+    return this.el.shadowRoot.querySelector('.calendar__header .calendar__month-heading');
   }
 
   nextMonthButton() {
-    return this.el.shadowRoot.querySelector('.calender__next-month-button');
+    return this.el.shadowRoot.querySelector('.calendar__next-month-button');
   }
 
   prevMonthButton() {
-    return this.el.shadowRoot.querySelector('.calender__prev-month-button');
+    return this.el.shadowRoot.querySelector('.calendar__prev-month-button');
   }
 
   grid() {

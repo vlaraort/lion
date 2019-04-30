@@ -5,6 +5,7 @@ import { createMonth } from './utils/createMonth.js';
 import { headerTemplate } from './utils/headerTemplate.js';
 import { monthTemplate } from './utils/monthTemplate.js';
 import { calendarStyles } from './calendarStyles.js';
+import { getFirstDayNextMonth, getLastDayPreviousMonth } from '../../localize/src/date/helpers.js';
 
 /**
  * @customElement
@@ -115,6 +116,11 @@ export class LionCalendar extends LionLitElement {
         currentDay = this._dayPreprocessor(currentDay);
       });
     });
+
+    this._nextMonthDisabled = this.maxDate && getFirstDayNextMonth(this.focusDate) > this.maxDate;
+    this._previousMonthDisabled =
+      this.minDate && getLastDayPreviousMonth(this.focusDate) < this.minDate;
+
     return month;
   }
 
@@ -194,7 +200,9 @@ export class LionCalendar extends LionLitElement {
         ${headerTemplate(this.focusDate, {
           monthsLabels: this._i18n.months,
           nextMonth: this.nextMonth,
+          nextMonthDisabled: this._nextMonthDisabled,
           previousMonth: this.previousMonth,
+          previousMonthDisabled: this._previousMonthDisabled,
         })}
         ${monthTemplate(this._monthsData, {
           focusDate: this.focusDate,
