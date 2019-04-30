@@ -5,8 +5,11 @@ export function dayTemplate(day) {
   return html`
     <td
       class=${classMap(classes)}
+      .selected=${day.selected}
       ?selected=${day.selected}
+      .disabled=${day.disabled}
       ?disabled=${day.disabled}
+      .focused=${day.focused}
       ?focused=${day.focused}
     >
       <button
