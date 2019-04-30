@@ -206,6 +206,7 @@ export class LionCalendar extends LionLitElement {
           previousMonthDisabled: this._previousMonthDisabled,
         })}
         ${monthTemplate(this._monthsData, {
+          monthsLabels: this._i18n.months,
           focusDate: this.focusDate,
           weekdaysShort: this._i18n.weekdaysShort,
           weekdays: this._i18n.weekdays,
