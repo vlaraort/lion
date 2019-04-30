@@ -300,16 +300,6 @@ describe('<lion-calendar>', () => {
   });
 
   describe('Calendar body (months view)', () => {
-    it('shows the current month belonging to selectedDate', async () => {
-      const el = await fixture(
-        html`
-          <lion-calendar .selectedDate="${new Date('2000-12-12')}"></lion-calendar>
-        `,
-      );
-      const elObj = new CalendarObject(el);
-      expect(elObj.monthHeading().textContent).to.equal('December 2000');
-    });
-
     it('renders the days of the week as table headers', async () => {
       const el = await fixture(
         html`
@@ -317,13 +307,15 @@ describe('<lion-calendar>', () => {
         `,
       );
       const elObj = new CalendarObject(el);
-      expect(elObj.weekDayHeaders().map(h => h.textContent)).to.eql(
-        getWeekdayNames({
-          locale: localize.locale,
-          style: 'short',
-          firstDayOfWeek: 1,
-        }),
-      );
+      expect(elObj.weekdayHeaders().map(h => h.textContent.trim())).to.deep.equal([
+        'Sun',
+        'Mon',
+        'Tue',
+        'Wed',
+        'Thu',
+        'Fri',
+        'Sat',
+      ]);
     });
 
     describe('Day view', () => {

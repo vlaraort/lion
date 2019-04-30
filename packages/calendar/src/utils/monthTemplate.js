@@ -8,7 +8,12 @@ export function monthTemplate(month, { weekdaysShort, weekdays } = {}) {
         <tr>
           ${weekdaysShort.map(
             (header, i) => html`
-              <th scope="col" aria-label="${weekdays[i]}" id="weekday${i + 1}">
+              <th
+                class="calendar__weekday-header"
+                scope="col"
+                aria-label="${weekdays[i]}"
+                id="weekday${i + 1}"
+              >
                 ${header}
               </th>
             `,
