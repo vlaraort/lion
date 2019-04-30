@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import { storiesOf, html } from '@open-wc/storybook';
 import {
   maxDateValidator,
