@@ -140,7 +140,7 @@ describe('<lion-calendar>', () => {
           </lion-calendar>
         `);
         const elObj = new CalendarObject(el);
-        expect(elObj.dayObj(10).disabled).to.equal(false);
+        expect(elObj.dayObj(5).disabled).to.equal(false);
         elObj.days().forEach((d, i) => {
           const shouldBeDisabled = i > 8;
           expect(new DayObject(d).disabled).to.equal(shouldBeDisabled);
