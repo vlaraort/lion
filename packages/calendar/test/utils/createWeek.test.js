@@ -1,5 +1,6 @@
 import { expect } from '@open-wc/testing';
 import { createWeek } from '../../src/utils/createWeek.js';
+import { createDay } from '../../src/utils/createDay.js';
 
 function compareWeek(obj) {
   for (let i = 0; i < 7; i += 1) {
@@ -12,16 +13,16 @@ function compareWeek(obj) {
 describe('createWeek', () => {
   it('creates week data starting from Sunday by default', () => {
     // https://www.timeanddate.com/date/weeknumber.html?d1=30&m1=12&y1=2018&w2=&y2=&wncm=1&wncd=1&wncs=4&fdow=7
-    expect(compareWeek(createWeek(new Date('2018-12-30')))).to.deep.equal(
+    expect(compareWeek(createWeek(new Date('2018/12/30')))).to.deep.equal(
       compareWeek({
         days: [
-          { date: new Date('2018-12-30'), selected: false, startOfWeek: true },
-          { date: new Date('2018-12-31'), selected: false, startOfWeek: false },
-          { date: new Date('2019-01-01'), selected: false, startOfWeek: false },
-          { date: new Date('2019-01-02'), selected: false, startOfWeek: false },
-          { date: new Date('2019-01-03'), selected: false, startOfWeek: false },
-          { date: new Date('2019-01-04'), selected: false, startOfWeek: false },
-          { date: new Date('2019-01-05'), selected: false, startOfWeek: false },
+          createDay(new Date('2018/12/30'), { startOfWeek: true }),
+          createDay(new Date('2018/12/31')),
+          createDay(new Date('2019/01/01')),
+          createDay(new Date('2019/01/02')),
+          createDay(new Date('2019/01/03')),
+          createDay(new Date('2019/01/04')),
+          createDay(new Date('2019/01/05')),
         ],
       }),
     );
@@ -29,16 +30,16 @@ describe('createWeek', () => {
 
   it('can create week data starting from different day', () => {
     // https://www.timeanddate.com/date/weeknumber.html?d1=31&m1=12&y1=2018&w2=&y2=&wncm=1&wncd=1&wncs=4&fdow=0
-    expect(compareWeek(createWeek(new Date('2018-12-31'), { firstDayOfWeek: 1 }))).to.deep.equal(
+    expect(compareWeek(createWeek(new Date('2018/12/31'), { firstDayOfWeek: 1 }))).to.deep.equal(
       compareWeek({
         days: [
-          { date: new Date('2018-12-31'), selected: false, startOfWeek: true },
-          { date: new Date('2019-01-01'), selected: false, startOfWeek: false },
-          { date: new Date('2019-01-02'), selected: false, startOfWeek: false },
-          { date: new Date('2019-01-03'), selected: false, startOfWeek: false },
-          { date: new Date('2019-01-04'), selected: false, startOfWeek: false },
-          { date: new Date('2019-01-05'), selected: false, startOfWeek: false },
-          { date: new Date('2019-01-06'), selected: false, startOfWeek: false },
+          createDay(new Date('2018/12/31'), { startOfWeek: true }),
+          createDay(new Date('2019/01/01')),
+          createDay(new Date('2019/01/02')),
+          createDay(new Date('2019/01/03')),
+          createDay(new Date('2019/01/04')),
+          createDay(new Date('2019/01/05')),
+          createDay(new Date('2019/01/06')),
         ],
       }),
     );
