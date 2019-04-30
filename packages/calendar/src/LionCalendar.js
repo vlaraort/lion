@@ -119,7 +119,10 @@ export class LionCalendar extends LionLitElement {
     let processedDay = day;
     processedDay.otherMonth = day.date.getMonth() !== this.focusDate.getMonth();
     processedDay.selected = isSameDay(day.date, this.selectedDate);
-    if (day.date < this.minDate) {
+    if (this.minDate && day.date < this.minDate) {
+      processedDay.disabled = true;
+    }
+    if (this.maxDate && day.date > this.maxDate) {
       processedDay.disabled = true;
     }
     // call custom dayPreprocessor
@@ -139,17 +142,26 @@ export class LionCalendar extends LionLitElement {
     super._requestUpdate(name, oldValue);
     const updateDataOn = ['minDate', 'maxDate', 'focusDate', 'selectedDate'];
 
-    if (name === 'selectedDate') {
-      this.focusDate = this.selectedDate;
-    }
-    if (name === 'focusDate') {
-      if (!this.isValidFocusDate(this.focusDate)) {
-        this.focusDate = this.findBestValidFocusDateFor(this.focusDate);
-      }
+    const map = {
+      selectedDate: () => this._selectedDateChanged(),
+      focusDate: () => this._focusDateChanged(),
+    };
+    if (map[name]) {
+      map[name]();
     }
 
     if (updateDataOn.includes(name) && this._monthsData.weeks) {
       this._monthsData = this.createMonth();
+    }
+  }
+
+  _selectedDateChanged() {
+    this.focusDate = this.selectedDate;
+  }
+
+  _focusDateChanged() {
+    if (!this.isValidFocusDate(this.focusDate)) {
+      this.focusDate = this.findBestValidFocusDateFor(this.focusDate);
     }
   }
 
