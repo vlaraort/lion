@@ -1,6 +1,25 @@
 import { html, classMap } from '@lion/core';
 
-export function dayTemplate(day, { weekdays, monthsLabels } = {}) {
+export function dayTemplate(
+  day,
+  {
+    weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+    monthsLabels = [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
+    ],
+  } = {},
+) {
   const classes = { calendar__day: !day.otherMonth, 'calendar__day--other-month': day.otherMonth };
   const dayNumber = day.date.getDate();
   const monthName = monthsLabels[day.date.getMonth()];
@@ -15,6 +34,8 @@ export function dayTemplate(day, { weekdays, monthsLabels } = {}) {
       ?disabled=${day.disabled}
       .focused=${day.focused}
       ?focused=${day.focused}
+      .current=${day.current}
+      ?current=${day.current}
     >
       <button
         class="calendar__day-button"

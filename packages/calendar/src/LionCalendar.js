@@ -79,8 +79,6 @@ export class LionCalendar extends LionLitElement {
     this.selectedDate = new Date();
     this.focusDate = this.selectedDate;
 
-    this._firstTimeUpdated = true;
-
     this._i18n = {
       weekdays: getWeekdayNames({
         locale: this.locale || localize.locale,
@@ -129,6 +127,7 @@ export class LionCalendar extends LionLitElement {
     day.otherMonth = day.date.getMonth() !== this.focusDate.getMonth();
     day.selected = isSameDay(day.date, this.selectedDate);
     day.focused = isSameDay(day.date, this.focusDate);
+    day.current = isSameDay(day.date, new Date());
     // call enabledDays
     day.disabled = !this.enabledDates(day.date);
 
