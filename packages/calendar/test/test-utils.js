@@ -84,36 +84,36 @@ export class CalendarObject {
    */
 
   header() {
-    return this.el.querySelector('.calendar__header');
+    return this.el.shadowRoot.querySelector('.calendar__header');
   }
 
   monthHeading() {
-    return this.el.querySelector('.calendar__header .calender__month-heading');
+    return this.el.shadowRoot.querySelector('.calendar__header .calender__month-heading');
   }
 
   nextMonthButton() {
-    return this.el.querySelector('.calender__next-month-button');
+    return this.el.shadowRoot.querySelector('.calender__next-month-button');
   }
 
   prevMonthButton() {
-    return this.el.querySelector('.calender__prev-month-button');
+    return this.el.shadowRoot.querySelector('.calender__prev-month-button');
   }
 
   grid() {
-    return this.el.querySelector('.calendar__grid');
+    return this.el.shadowRoot.querySelector('.calendar__grid');
   }
 
   weekdayHeaders() {
-    return [].slice.call(this.el.querySelectorAll('.calendar__weekday-header'));
+    return [].slice.call(this.el.shadowRoot.querySelectorAll('.calendar__weekday-header'));
   }
 
   days() {
-    return [].slice.call(this.el.querySelectorAll('.calendar__day'));
+    return [].slice.call(this.el.shadowRoot.querySelectorAll('.calendar__day'));
   }
 
   day(monthDayNumber) {
     // Relies on the fact that empty cells don't have .calendar__day class
-    return this.el.querySelectorAll('.calendar__day')[monthDayNumber - 1];
+    return this.el.shadowRoot.querySelectorAll('.calendar__day')[monthDayNumber - 1];
   }
 
   dayObj(monthDayNumber) {

@@ -1,6 +1,6 @@
 import { html } from '@lion/core';
 import { LionLitElement } from '@lion/core/src/LionLitElement.js';
-import { localize, getWeekdayNames, getMonthNames } from '@lion/localize';
+import { localize, getWeekdayNames, getMonthNames, isSameDay } from '@lion/localize';
 import { createMonth } from './utils/createMonth.js';
 import { headerTemplate } from './utils/headerTemplate.js';
 import { monthTemplate } from './utils/monthTemplate.js';
@@ -32,7 +32,7 @@ export class LionCalendar extends LionLitElement {
       /**
        * Enabled dates function that is applied for every monthday within the active view
        */
-      dayPreProcessor: { type: Function },
+      dayPreprocessor: { type: Function },
 
       /**
        * Weekday that will be displayed in first column of month grid.
@@ -52,23 +52,28 @@ export class LionCalendar extends LionLitElement {
 
       // TODO: showWeekNumbers
 
+      locale: { type: String },
+
       /**
        * The currently focused date in active viewport
        */
       focusDate: { type: Date },
-      _monthsData: { type: Array },
+      _monthsData: { type: Object },
     };
   }
 
   constructor() {
     super();
     // Defaults
+    this._monthsData = {};
     this.minDate = null;
     this.maxDate = null;
-    this.dayPreProcessor = day => day;
+    this.dayPreprocessor = day => day;
     this.firstDayOfWeek = 0;
     this.weekdayHeaderNotation = 'short';
-    this.focusDate = this.selectedDate || new Date();
+    this.locale = localize.locale;
+    this.selectedDate = new Date();
+    this.focusDate = this.selectedDate;
 
     this._firstTimeUpdated = true;
 
@@ -86,11 +91,16 @@ export class LionCalendar extends LionLitElement {
       months: getMonthNames({ locale: this.locale || localize.locale }),
     };
 
-    // Triggers render function
-    this._monthsData = this.createMonth();
-
     // TODO: what is prependZero?
     this.prependZero = true;
+  }
+
+  connectedCallback() {
+    // eslint-disable-next-line wc/guard-super-call
+    super.connectedCallback();
+
+    // Triggers render function
+    this._monthsData = this.createMonth();
   }
 
   createMonth() {
@@ -107,11 +117,10 @@ export class LionCalendar extends LionLitElement {
 
   _dayPreprocessor(day) {
     let processedDay = day;
-    if (day.date.getMonth() !== this.focusDate.getMonth()) {
-      processedDay.disabled = true;
-    }
-    // call custom preProcessor
-    processedDay = this.dayPreProcessor(processedDay);
+    processedDay.disabled = day.date.getMonth() !== this.focusDate.getMonth();
+    processedDay.selected = isSameDay(day.date, this.selectedDate);
+    // call custom dayPreprocessor
+    processedDay = this.dayPreprocessor(processedDay);
     return processedDay;
   }
 
@@ -123,23 +132,21 @@ export class LionCalendar extends LionLitElement {
     this.focusDate = new Date(this.focusDate.setMonth(this.focusDate.getMonth() - 1));
   }
 
-  updated(c) {
-    super.updated(c);
-
-    if (this._firstTimeUpdated) {
-      this._firstTimeUpdated = false;
-    } else if (c.has('minDate') || c.has('maxDate') || c.has('focusDate')) {
-      // Gather updated month view; triggers a rerender
-      this._monthsData = this.createMonth();
-    }
-  }
-
   _requestUpdate(name, oldValue) {
     super._requestUpdate(name, oldValue);
+    const updateDataOn = ['minDate', 'maxDate', 'focusDate', 'selectedDate'];
+
+    if (name === 'selectedDate') {
+      this.focusDate = this.selectedDate;
+    }
     if (name === 'focusDate') {
       if (!this.isValidFocusDate(this.focusDate)) {
         this.focusDate = this.findBestValidFocusDateFor(this.focusDate);
       }
+    }
+
+    if (updateDataOn.includes(name) && this._monthsData.weeks) {
+      this._monthsData = this.createMonth();
     }
   }
 

@@ -42,7 +42,8 @@ describe('<lion-calendar>', () => {
   });
 
   describe('Structure', () => {
-    it('implements the calendar CSS Module for HTML structure', async () => {
+    // already tested via utils tests
+    it.skip('implements the calendar CSS Module for HTML structure', async () => {
       const el = await fixture(
         html`
           <lion-calendar></lion-calendar>
@@ -98,7 +99,7 @@ describe('<lion-calendar>', () => {
       expect(elObj.day(15).selected).to.equal(true);
       expect(elObj.day(16).selected).to.equal(false);
       expect(elObj.day(14).selected).to.equal(false);
-      el.selectedDate = new Date('2018/07/15'); // switch month and year
+      el.selectedDate = new Date('2019/06/16');
       await el.updateCompleted;
       expect(elObj.day(15).selected).to.equal(false);
     });
