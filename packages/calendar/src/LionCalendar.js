@@ -83,7 +83,7 @@ export class LionCalendar extends LionLitElement {
         style: 'long',
         firstDayOfWeek: this.firstDayOfWeek,
       }),
-      weekdaysAbbreviations: getWeekdayNames({
+      weekdaysShort: getWeekdayNames({
         locale: this.locale || localize.locale,
         style: this.weekdayHeaderNotation,
         firstDayOfWeek: this.firstDayOfWeek,
@@ -176,7 +176,7 @@ export class LionCalendar extends LionLitElement {
         })}
         ${monthTemplate(this._monthsData, {
           focusDate: this.focusDate,
-          weekdaysAbbreviations: this._i18n.weekdaysAbbreviations,
+          weekdaysShort: this._i18n.weekdaysShort,
           weekdays: this._i18n.weekdays,
         })}
       </div>
