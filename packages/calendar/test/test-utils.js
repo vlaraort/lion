@@ -152,9 +152,9 @@ export class CalendarObject {
    * - Example 2: "(dayNumber) => dayNumber === 15" (1 based ,not zero based)
    */
   checkForAllDays(condition, filter) {
-    return this.days().every((d, i) => {
+    return this.days().every(d => {
       const dayObj = new DayObject(d);
-      const dayNumber = i + 1;
+      const dayNumber = dayObj.monthday;
       let shouldApply = true;
       if (filter !== undefined) {
         shouldApply = filter instanceof Array ? filter.includes(dayNumber) : filter(dayNumber);

@@ -23,7 +23,7 @@ describe('<lion-calendar>', () => {
   let clock;
 
   beforeEach(() => {
-    clock = sinon.useFakeTimers({ now: 0 }); // set Unix timestamp (0 = beginning of the Unix epoch)
+    clock = sinon.useFakeTimers({ now: 976838400000 }); // new Date('2000-12-15')
     localizeTearDown();
   });
 
@@ -319,14 +319,19 @@ describe('<lion-calendar>', () => {
     });
 
     describe('Day view', () => {
-      it('adds "current" modifier to current date(today)', async () => {
+      it('adds "current" modifier to current date (today)', async () => {
         const el = await fixture(
           html`
             <lion-calendar .selectedDate="${new Date('2000-12-12')}"></lion-calendar>
           `,
         );
         const elObj = new CalendarObject(el);
-        expect(elObj.checkForAllDays(d => d.focused, [15])).to.equal(true);
+        expect(elObj.day(15).current).to.be.true;
+
+        expect(elObj.day(10).current).to.be.false;
+        expect(elObj.day(20).current).to.be.false;
+        // TODO: checkForAllDays does not work here?
+        // expect(elObj.checkForAllDays(d => d.current, [15])).to.equal(true);
       });
 
       it('adds "selected" modifier to selected date', async () => {

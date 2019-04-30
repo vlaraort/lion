@@ -13,7 +13,7 @@ describe('dayTemplate', () => {
         <button
           class="calendar__day-button"
           tabindex="-1"
-          aria-label="19"
+          aria-label="19 April 2019 Friday"
           aria-selected="false"
         >
           19
