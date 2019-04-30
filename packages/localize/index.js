@@ -3,6 +3,7 @@ export { getDateFormatBasedOnLocale } from './src/date/getDateFormatBasedOnLocal
 export { getMonthNames } from './src/date/getMonthNames.js';
 export { getWeekdayNames } from './src/date/getWeekdayNames.js';
 export { parseDate } from './src/date/parseDate.js';
+export { isSameDay } from './src/date/helpers.js';
 export {
   formatNumber,
   formatNumberToParts,
