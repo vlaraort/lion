@@ -124,11 +124,11 @@ export class CalendarObject {
     return this.days().map(d => new DayObject(d));
   }
 
-  focusedDay() {
-    return this.dayObjs.find(d => d.focused);
+  focusedDayObj() {
+    return this.dayObjs().find(d => d.focused);
   }
 
-  focusedDayObj() {
+  focusedDay() {
     return this.focusedDay().el;
   }
 
