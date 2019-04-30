@@ -2,6 +2,10 @@ import { html, classMap } from '@lion/core';
 
 export function dayTemplate(day, { weekdays, monthsLabels } = {}) {
   const classes = { calendar__day: !day.otherMonth, 'calendar__day--other-month': day.otherMonth };
+  const dayNumber = day.date.getDate();
+  const monthName = monthsLabels[day.date.getMonth()];
+  const year = day.date.getFullYear();
+  const weekDay = weekdays[day.date.getDay()];
   return html`
     <td
       class=${classMap(classes)}
@@ -15,9 +19,7 @@ export function dayTemplate(day, { weekdays, monthsLabels } = {}) {
       <button
         class="calendar__day-button"
         tabindex=${day.selected ? '0' : '-1'}
-        aria-label=${`${day.date.getDate()} ${
-          monthsLabels[day.date.getMonth()]
-        } ${day.date.getFullYear()} ${weekdays[day.date.getDay()]}`}
+        aria-label=${`${dayNumber} ${monthName} ${year} ${weekDay}`}
         aria-selected=${day.selected ? 'true' : 'false'}
         ?disabled=${day.disabled || day.otherMonth}
       >
