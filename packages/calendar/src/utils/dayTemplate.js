@@ -1,23 +1,25 @@
-import { html, classMap } from '@lion/core';
+import { html, classMap, ifDefined } from '@lion/core';
+
+const defaultMonthLabels = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
+];
 
 export function dayTemplate(
   day,
   {
     weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
-    monthsLabels = [
-      'January',
-      'February',
-      'March',
-      'April',
-      'May',
-      'June',
-      'July',
-      'August',
-      'September',
-      'October',
-      'November',
-      'December',
-    ],
+    monthsLabels = defaultMonthLabels,
   } = {},
 ) {
   const classes = { calendar__day: !day.otherMonth, 'calendar__day--other-month': day.otherMonth };
@@ -42,6 +44,7 @@ export function dayTemplate(
         tabindex=${day.selected ? '0' : '-1'}
         aria-label=${`${dayNumber} ${monthName} ${year} ${weekDay}`}
         aria-selected=${day.selected ? 'true' : 'false'}
+        aria-current=${ifDefined(day.current ? 'date' : undefined)}
         ?disabled=${day.disabled || day.otherMonth}
       >
         ${day.date.getDate()}
