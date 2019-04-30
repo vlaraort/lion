@@ -39,14 +39,15 @@ describe('<lion-input-datepicker>', () => {
   });
 
   describe('Calendar Overlay', () => {
-    it('exposes ModalDialogController "overlayCtrl" to display calendar', async () => {
-      const el = await fixture(
-        html`
-          <lion-input-datepicker></lion-input-datepicker>
-        `,
-      );
-      expect(el.overlayCtrl instanceof ModalDialogController).to.equal(true);
-    });
+    // TODO: don't espose
+    // it('exposes ModalDialogController "overlayCtrl" to display calendar', async () => {
+    //   const el = await fixture(
+    //     html`
+    //       <lion-input-datepicker></lion-input-datepicker>
+    //     `,
+    //   );
+    //   expect(el.overlayCtrl instanceof ModalDialogController).to.equal(true);
+    // });
 
     it('implements calendar-overlay CSS component', async () => {
       const el = await fixture(
@@ -122,6 +123,7 @@ describe('<lion-input-datepicker>', () => {
       expect(el.overlayCtrl.isShown).to.equal(true);
     });
 
+    // TODO: maybe make optional if the generic layer already provides in this
     it('disabled flag also disables the datepicker', async () => {
       const el = await fixture(
         html`
@@ -148,7 +150,7 @@ describe('<lion-input-datepicker>', () => {
       expect(el.modelValue).to.equal(myOtherDate);
     });
 
-    it('closes the calendar overlay(<lion-datepicker>) on "selected-changed"', async () => {});
+    it('closes the calendar overlay(<lion-datepicker>) on "selected-date-changed"', async () => {});
 
     it('closes the calendar on [esc] key', async () => {});
 
