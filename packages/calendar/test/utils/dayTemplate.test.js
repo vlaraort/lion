@@ -6,7 +6,7 @@ import { dayTemplate } from '../../src/utils/dayTemplate.js';
 
 describe('dayTemplate', () => {
   it('renders day cell', async () => {
-    const day = createDay(new Date('2019-04-19'));
+    const day = createDay(new Date('2019/04/19'));
     const el = await fixture(dayTemplate(day));
     expect(el).dom.to.equal(`
       <td class="calendar__day">
