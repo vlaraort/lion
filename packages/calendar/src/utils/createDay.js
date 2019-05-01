@@ -6,6 +6,7 @@ export function createDay(
     focused = false,
     otherMonth = false,
     current = false,
+    hovered = false,
   } = {},
 ) {
   return {
@@ -15,5 +16,6 @@ export function createDay(
     focused,
     otherMonth,
     current,
+    hovered,
   };
 }

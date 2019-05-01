@@ -66,6 +66,7 @@ export class LionCalendar extends LitElement {
        * The currently focused date in active viewport
        */
       focusDate: { type: Date },
+      hoverDate: { type: Date },
       _monthsData: { type: Object },
     };
   }
@@ -83,6 +84,8 @@ export class LionCalendar extends LitElement {
     this.locale = localize.locale;
     this.selectedDate = new Date();
     this.focusDate = this.selectedDate;
+    /** @property {Date} */
+    this.hoverDate = null;
 
     this._i18n = {
       weekdays: getWeekdayNames({
@@ -110,6 +113,17 @@ export class LionCalendar extends LitElement {
     this._monthsData = this.createMonth();
   }
 
+  firstUpdated() {
+    super.firstUpdated();
+
+    this.shadowRoot.getElementById('calendar').addEventListener('mouseover', ev => {
+      // can not be debounced as ev.target becomes undefined
+      if (ev.target.tagName === 'BUTTON') {
+        this.hoverDate = ev.target.date;
+      }
+    });
+  }
+
   createMonth() {
     const month = createMonth(this.focusDate, { firstDayOfWeek: this.firstDayOfWeek });
     month.weeks.forEach((week, weeki) => {
@@ -133,6 +147,7 @@ export class LionCalendar extends LitElement {
     day.selected = isSameDay(day.date, this.selectedDate);
     day.focused = isSameDay(day.date, this.focusDate);
     day.current = isSameDay(day.date, new Date());
+    day.hovered = this.hoverDate ? isSameDay(day.date, this.hoverDate) : false;
     // call enabledDays
     day.disabled = !this.enabledDates(day.date);
 
@@ -158,7 +173,7 @@ export class LionCalendar extends LitElement {
 
   _requestUpdate(name, oldValue) {
     super._requestUpdate(name, oldValue);
-    const updateDataOn = ['minDate', 'maxDate', 'focusDate', 'selectedDate'];
+    const updateDataOn = ['minDate', 'maxDate', 'focusDate', 'hoverDate', 'selectedDate'];
 
     const map = {
       selectedDate: () => this._selectedDateChanged(),

@@ -38,6 +38,8 @@ export function dayTemplate(
       ?focused=${day.focused}
       .current=${day.current}
       ?current=${day.current}
+      .hovered=${day.hovered}
+      ?hovered=${day.hovered}
     >
       <button
         class="calendar__day-button"
@@ -46,6 +48,7 @@ export function dayTemplate(
         aria-selected=${day.selected ? 'true' : 'false'}
         aria-current=${ifDefined(day.current ? 'date' : undefined)}
         ?disabled=${day.disabled || day.otherMonth}
+        .date=${day.date}
       >
         ${day.date.getDate()}
       </button>
