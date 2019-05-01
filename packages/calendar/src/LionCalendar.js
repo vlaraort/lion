@@ -115,13 +115,7 @@ export class LionCalendar extends LitElement {
 
   firstUpdated() {
     super.firstUpdated();
-
-    this.shadowRoot.getElementById('calendar').addEventListener('mouseover', ev => {
-      // can not be debounced as ev.target becomes undefined
-      if (ev.target.tagName === 'BUTTON') {
-        this.hoverDate = ev.target.date;
-      }
-    });
+    this.__addEventDelegationForHoverDate();
   }
 
   createMonth() {
@@ -281,5 +275,29 @@ export class LionCalendar extends LitElement {
         ${this.headerTemplate()} ${this.monthTemplate()}
       </div>
     `;
+  }
+
+  __addEventDelegationForHoverDate() {
+    let timeout;
+    const isDayOrButton = el =>
+      el.classList.contains('calendar__day') || el.classList.contains('calendar__day-button');
+    this.shadowRoot.getElementById('calendar').addEventListener('mouseover', ev => {
+      if (!timeout) {
+        // if we don't pass on the parameters to setTimeout then ev.composedPath() becomes empty
+        timeout = setTimeout(
+          (el, that) => {
+            if (isDayOrButton(el)) {
+              that.hoverDate = el.date; // eslint-disable-line no-param-reassign
+            } else {
+              that.hoverDate = null; // eslint-disable-line no-param-reassign
+            }
+            timeout = null;
+          },
+          15,
+          ev.composedPath()[0],
+          this,
+        );
+      }
+    });
   }
 }

@@ -40,6 +40,7 @@ export function dayTemplate(
       ?current=${day.current}
       .hovered=${day.hovered}
       ?hovered=${day.hovered}
+      .date=${day.date}
     >
       <button
         class="calendar__day-button"
