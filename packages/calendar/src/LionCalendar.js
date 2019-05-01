@@ -2,7 +2,6 @@ import { html } from '@lion/core';
 import { LionLitElement } from '@lion/core/src/LionLitElement.js';
 import { localize, getWeekdayNames, getMonthNames, isSameDay } from '@lion/localize';
 import { createMonth } from './utils/createMonth.js';
-import { headerTemplate } from './utils/headerTemplate.js';
 import { monthTemplate } from './utils/monthTemplate.js';
 import { calendarStyles } from './calendarStyles.js';
 import { getFirstDayNextMonth, getLastDayPreviousMonth } from '../../localize/src/date/helpers.js';
@@ -197,13 +196,46 @@ export class LionCalendar extends LionLitElement {
   }
 
   headerTemplate() {
-    return headerTemplate(this.focusDate, {
-      monthsLabels: this._i18n.months,
-      nextMonth: this.nextMonth,
-      nextMonthDisabled: this._nextMonthDisabled,
-      previousMonth: this.previousMonth,
-      previousMonthDisabled: this._previousMonthDisabled,
-    });
+    return html`
+      <div id="calendar__header" class="calendar__header">
+        ${this.previousButtonTemplate()}
+        <h2
+          id="month_and_year"
+          class="calendar__month-heading"
+          aria-live="polite"
+          aria-atomic="true"
+        >
+          ${this._i18n.months[this.focusDate.getMonth()]} ${this.focusDate.getFullYear()}
+        </h2>
+        ${this.nextButtonTemplate()}
+      </div>
+    `;
+  }
+
+  previousButtonTemplate() {
+    return html`
+      <button
+        class="calendar__prev-month-button"
+        aria-label="Previous month"
+        @click=${this.previousMonth}
+        ?disabled=${this._previousMonthDisabled}
+      >
+        &lt;
+      </button>
+    `;
+  }
+
+  nextButtonTemplate() {
+    return html`
+      <button
+        class="calendar__next-month-button"
+        aria-label="Next month"
+        @click=${this.nextMonth}
+        ?disabled=${this._nextMonthDisabled}
+      >
+        &gt;
+      </button>
+    `;
   }
 
   // eslint-disable-next-line class-methods-use-this
