@@ -21,4 +21,5 @@ describe('dayTemplate', () => {
       </td>
     `);
   });
+  // TODO: add test for other month day
 });
