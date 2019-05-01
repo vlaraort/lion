@@ -217,6 +217,7 @@ export class LionCalendar extends LionLitElement {
       <button
         class="calendar__prev-month-button"
         aria-label="Previous month"
+        title="Previous month"
         @click=${this.previousMonth}
         ?disabled=${this._previousMonthDisabled}
       >
@@ -230,6 +231,7 @@ export class LionCalendar extends LionLitElement {
       <button
         class="calendar__next-month-button"
         aria-label="Next month"
+        title="Next month"
         @click=${this.nextMonth}
         ?disabled=${this._nextMonthDisabled}
       >
