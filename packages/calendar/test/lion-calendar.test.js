@@ -283,17 +283,12 @@ describe('<lion-calendar>', () => {
 
       describe('Accessibility', () => {
         it('navigate buttons have a tooltip with accesible label', async () => {
-          // For now, we create the tooltip with a title attribute on the lion layer.
-          // On super layers extending lion-calendar, progressive enhancement (replacing those
-          // titles with tooltip functionality imperatively) could be applied to achieve
-          // proper UX (and a11y?).
-          // TODO: reconsider when tooltip in Overlay System finished
           const el = await fixture(html`
             <lion-calendar .selectedDate="${new Date('2000/12/12')}"></lion-calendar>
           `);
           const elObj = new CalendarObject(el);
-          expect(elObj.prevMonthButton().getAttribute('title')).to.equal('Previous Month');
-          expect(elObj.nextMonthButton().getAttribute('title')).to.equal('Next Month');
+          expect(elObj.prevMonthButton().getAttribute('title')).to.equal('Previous month');
+          expect(elObj.nextMonthButton().getAttribute('title')).to.equal('Next month');
         });
       });
     });
