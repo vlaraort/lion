@@ -60,12 +60,13 @@ export const calendarStyles = css`
     text-decoration: underline;
   }
 
-  .calendar__day[hovered] {
+  .calendar__day[hovered] > button {
+    border: 1px solid green;
   }
 
   .calendar__day-button {
     background-color: #fff;
-    border: 0 none;
+    border: 1px solid #fff;
   }
 
   .calendar__day--padding {
