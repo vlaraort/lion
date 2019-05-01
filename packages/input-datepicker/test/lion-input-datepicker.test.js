@@ -96,11 +96,13 @@ describe('<lion-input-datepicker>', () => {
     it('can have a custom heading', async () => {
       const el = await fixture(
         html`
-          <lion-input-datepicker heading="foo"></lion-input-datepicker>
+          <lion-input-datepicker calendar-heading="foo"></lion-input-datepicker>
         `,
       );
       const elObj = new DatepickerInputObject(el);
-      expect(elObj.overlay().querySelector('calendar-overlay__title').textContent).to.equal('foo');
+      expect(elObj.overlay().querySelector('calendar-overlay__heading').textContent).to.equal(
+        'foo',
+      );
     });
 
     /**
@@ -124,7 +126,7 @@ describe('<lion-input-datepicker>', () => {
     });
 
     // TODO: maybe make optional if the generic layer already provides in this
-    it('disabled flag also disables the datepicker', async () => {
+    it('disabled flag also disables the datepicker invoker', async () => {
       const el = await fixture(
         html`
           <lion-input-datepicker disabled></lion-input-datepicker>
@@ -162,7 +164,7 @@ describe('<lion-input-datepicker>', () => {
           `,
         );
         const elObj = new DatepickerInputObject(el);
-        expect(elObj.overlay().querySelector('calendar-overlay__title').tagName).to.equal('H1');
+        expect(elObj.overlay().querySelector('calendar-overlay__heading').tagName).to.equal('H1');
       });
 
       it('adds accessible label to invoker button', async () => {
