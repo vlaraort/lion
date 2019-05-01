@@ -48,10 +48,16 @@ export const calendarStyles = css`
   .calendar__day {
   }
 
-  .calendar__day[selected] {
+  .calendar__day[selected] > button {
+    background: #ccc;
   }
 
-  .calendar__day[focused] {
+  .calendar__day[focused] > button {
+    border: 1px solid #333;
+  }
+
+  .calendar__day[current] > button {
+    text-decoration: underline;
   }
 
   .calendar__day[hovered] {

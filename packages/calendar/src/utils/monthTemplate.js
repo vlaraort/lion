@@ -1,7 +1,10 @@
 import { html } from '@lion/core';
-import { dayTemplate } from './dayTemplate.js';
+import { dayTemplate as defaultDayTemplate } from './dayTemplate.js';
 
-export function monthTemplate(month, { weekdaysShort, weekdays, monthsLabels } = {}) {
+export function monthTemplate(
+  month,
+  { weekdaysShort, weekdays, monthsLabels, dayTemplate = defaultDayTemplate } = {},
+) {
   return html`
     <table role="grid" aria-readonly="true" class="calendar__grid" aria-labelledby="month_and_year">
       <thead id="calendar__thead">
