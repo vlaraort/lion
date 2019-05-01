@@ -1,11 +1,9 @@
-/* eslint-env mocha */
-/* eslint-disable no-unused-expressions, no-template-curly-in-string, no-unused-vars */
-import { expect, fixture } from '@open-wc/testing';
+import { expect, fixture, aTimeout } from '@open-wc/testing';
 import sinon from 'sinon';
 import { keyDownOn } from '@polymer/iron-test-helpers/mock-interactions.js';
 
 import { html } from '@lion/core';
-import { localize, getWeekdayNames } from '@lion/localize';
+import { localize } from '@lion/localize';
 import { localizeTearDown } from '@lion/localize/test-helpers.js';
 
 import { CalendarObject, DayObject, keyCodes } from './test-utils.js';
@@ -20,15 +18,8 @@ import '../lion-calendar.js';
 // - test utils "CalendarObject" and "DayObject" may need some small changes (since not tested out)
 
 describe('<lion-calendar>', () => {
-  let clock;
-
   beforeEach(() => {
-    clock = sinon.useFakeTimers({ now: 976838400000 }); // new Date('2000/12/15')
     localizeTearDown();
-  });
-
-  afterEach(() => {
-    clock.restore();
   });
 
   it('gets locale by default from document', async () => {
@@ -315,6 +306,8 @@ describe('<lion-calendar>', () => {
 
     describe('Day view', () => {
       it('adds "current" modifier to current date (today)', async () => {
+        const clock = sinon.useFakeTimers({ now: 976838400000 }); // new Date('2000/12/15')
+
         const el = await fixture(
           html`
             <lion-calendar .selectedDate="${new Date('2000/12/12')}"></lion-calendar>
@@ -327,6 +320,8 @@ describe('<lion-calendar>', () => {
         expect(elObj.day(20).current).to.be.false;
         // TODO: checkForAllDays does not work here?
         // expect(elObj.checkForAllDays(d => d.current, [15])).to.equal(true);
+
+        clock.restore();
       });
 
       it('adds "selected" modifier to selected date', async () => {
@@ -371,7 +366,13 @@ describe('<lion-calendar>', () => {
           `,
         );
         const elObj = new CalendarObject(el);
-        elObj.day(1).button.dispatchEvent(new Event('mouseover'));
+        elObj
+          .dayObj(1)
+          .button()
+          .dispatchEvent(new CustomEvent('mouseover', { bubbles: true }));
+        await el.updateCompleted;
+        await aTimeout(20); // as event is debounced
+
         expect(elObj.day(1).hovered).to.equal(true);
       });
     });
@@ -630,6 +631,8 @@ describe('<lion-calendar>', () => {
         });
 
         it('initial focus is on today if no selected date is available', async () => {
+          const clock = sinon.useFakeTimers({ now: 976838400000 }); // new Date('2000/12/15')
+
           const elObj = new CalendarObject(
             await fixture(
               html`
@@ -638,6 +641,7 @@ describe('<lion-calendar>', () => {
             ),
           );
           expect(elObj.focusedDayObj().monthday).to.equal(new Date().getDate());
+          clock.restore();
         });
 
         it('initial focus is on day closest to today, if today (and surrounding dates) is/are disabled', async () => {
@@ -818,11 +822,11 @@ describe('<lion-calendar>', () => {
 
   describe('Localization', () => {
     it.skip('displays the right translations according to locale', async () => {
-      const el = await fixture(
-        html`
-          <lion-datepicker></lion-datepicker>
-        `,
-      );
+      // const el = await fixture(
+      //   html`
+      //     <lion-datepicker></lion-datepicker>
+      //   `,
+      // );
       /**
        * translate:
        * - weekdays
