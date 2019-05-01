@@ -65,7 +65,7 @@ export class DayObject {
 
   get weekday() {
     const weekdayEls = Array.from(
-      this.el.closest('tr').querySelectorAll('.calendar__day, .calendar__day--other-month'),
+      this.el.parentElement.querySelectorAll('.calendar__day, .calendar__day--other-month'),
     );
     const dayIndex = weekdayEls.indexOf(this.el);
     return weekdaysShort['en-GB'].Sunday[dayIndex];
@@ -73,7 +73,7 @@ export class DayObject {
 
   get weekdayLong() {
     const weekdayEls = Array.from(
-      this.el.closest('tr').querySelectorAll('.calendar__day, .calendar__day--other-month'),
+      this.el.parentElement.querySelectorAll('.calendar__day, .calendar__day--other-month'),
     );
     const dayIndex = weekdayEls.indexOf(this.el);
     return weekdays['en-GB'].Sunday[dayIndex];
