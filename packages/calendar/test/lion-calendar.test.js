@@ -633,44 +633,69 @@ describe('<lion-calendar>', () => {
         it('initial focus is on today if no selected date is available', async () => {
           const clock = sinon.useFakeTimers({ now: 976838400000 }); // new Date('2000/12/15')
 
-          const elObj = new CalendarObject(
-            await fixture(
-              html`
-                <lion-calendar></lion-calendar>
-              `,
-            ),
-          );
-          expect(elObj.focusedDayObj().monthday).to.equal(new Date().getDate());
+          const el = await fixture(html`
+            <lion-calendar></lion-calendar>
+          `);
+          const elObj = new CalendarObject(el);
+          expect(elObj.focusedDayObj().monthday).to.equal(15);
           clock.restore();
         });
 
         it('initial focus is on day closest to today, if today (and surrounding dates) is/are disabled', async () => {
-          const currentMonthDay = new Date().getDate();
-          const disabledRange = [currentMonthDay, currentMonthDay + 1];
-          const elObj = new CalendarObject(
-            await fixture(
-              html`
-                <lion-calendar
-                  .enabledDates="${d => !disabledRange.includes(d.getDate())}"
-                ></lion-calendar>
-              `,
-            ),
-          );
-          expect(elObj.focusedDayObj().monthday).not.to.equal(currentMonthDay);
-          expect(elObj.focusedDayObj().monthday).to.equal(currentMonthDay - 1);
+          const clock = sinon.useFakeTimers({ now: 976838400000 }); // new Date('2000/12/15')
+
+          const el = await fixture(html`
+            <lion-calendar .enabledDates="${d => d.getDate() > 16}"></lion-calendar>
+          `);
+          const elObj = new CalendarObject(el);
+          expect(elObj.focusedDayObj().monthday).to.equal(17);
+
+          el.enabledDates = d => d.getDate() < 12;
+          await el.updateCompleted;
+          expect(elObj.focusedDayObj().monthday).to.equal(11);
+
+          clock.restore();
         });
 
         it('future dates take precedence over past dates when "distance" between dates is equal', async () => {
-          const currentMonthDay = new Date().getDate();
-          const elObj = new CalendarObject(
-            await fixture(
-              html`
-                <lion-calendar .enabledDates="${d => d !== currentMonthDay}"></lion-calendar>
-              `,
-            ),
-          );
-          expect(elObj.focusedDayObj().monthday).not.to.equal(currentMonthDay);
-          expect(elObj.focusedDayObj().monthday).to.equal(currentMonthDay + 1);
+          const clock = sinon.useFakeTimers({ now: 976838400000 }); // new Date('2000/12/15')
+
+          const el = await fixture(html`
+            <lion-calendar .enabledDates="${d => d.getDate() !== 15}"></lion-calendar>
+          `);
+          const elObj = new CalendarObject(el);
+          expect(elObj.focusedDayObj().monthday).to.equal(16);
+
+          clock.restore();
+        });
+
+        it('it will search 3650 days in the future and past', async () => {
+          const clock = sinon.useFakeTimers({ now: 976838400000 }); // new Date('2000/12/15')
+
+          const el = await fixture(html`
+            <lion-calendar .enabledDates="${d => d.getFullYear() >= 2010}"></lion-calendar>
+          `);
+          expect(el.focusDate.getFullYear()).to.equal(2010);
+          expect(el.focusDate.getMonth()).to.equal(0);
+          expect(el.focusDate.getDate()).to.equal(1);
+
+          clock.restore();
+        });
+
+        it('throws if no valid date can be found within +/- 3650 days', async () => {
+          const el = await fixture(html`
+            <lion-calendar .enabledDates="${d => d.getFullYear() >= 2010}"></lion-calendar>
+          `);
+          try {
+            el.focusDate = new Date('1900/01/01');
+          } catch (e) {
+            expect(e).to.be.instanceof(Error);
+            expect(e.message).to.equal(
+              'Could not find a valid focus date within +/- 3650 day for 1900/1/1',
+            );
+            return;
+          }
+          throw new Error('did not throw');
         });
       });
 
