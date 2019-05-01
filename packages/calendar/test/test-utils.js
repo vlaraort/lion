@@ -64,17 +64,13 @@ export class DayObject {
   }
 
   get weekday() {
-    const weekdayEls = Array.from(
-      this.el.parentElement.querySelectorAll('.calendar__day, .calendar__day--other-month'),
-    );
+    const weekdayEls = Array.from(this.el.parentElement.querySelectorAll('.calendar__day'));
     const dayIndex = weekdayEls.indexOf(this.el);
     return weekdaysShort['en-GB'].Sunday[dayIndex];
   }
 
   get weekdayLong() {
-    const weekdayEls = Array.from(
-      this.el.parentElement.querySelectorAll('.calendar__day, .calendar__day--other-month'),
-    );
+    const weekdayEls = Array.from(this.el.parentElement.querySelectorAll('.calendar__day'));
     const dayIndex = weekdayEls.indexOf(this.el);
     return weekdays['en-GB'].Sunday[dayIndex];
   }
@@ -118,12 +114,12 @@ export class CalendarObject {
   }
 
   days() {
-    return [].slice.call(this.el.shadowRoot.querySelectorAll('.calendar__day'));
+    return [].slice.call(this.el.shadowRoot.querySelectorAll('.calendar__day--current-month'));
   }
 
   day(monthDayNumber) {
-    // Relies on the fact that empty cells don't have .calendar__day class
-    return this.el.shadowRoot.querySelectorAll('.calendar__day')[monthDayNumber - 1];
+    // Relies on the fact that empty cells don't have .calendar__day--current-month class
+    return this.el.shadowRoot.querySelectorAll('.calendar__day--current-month')[monthDayNumber - 1];
   }
 
   dayObj(monthDayNumber) {

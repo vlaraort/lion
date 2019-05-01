@@ -22,7 +22,11 @@ export function dayTemplate(
     monthsLabels = defaultMonthLabels,
   } = {},
 ) {
-  const classes = { calendar__day: true, 'calendar__day--other-month': day.otherMonth };
+  const classes = {
+    calendar__day: true,
+    'calendar__day--current-month': !day.otherMonth,
+    'calendar__day--other-month': day.otherMonth,
+  };
   const dayNumber = day.date.getDate();
   const monthName = monthsLabels[day.date.getMonth()];
   const year = day.date.getFullYear();
