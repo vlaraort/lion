@@ -10,7 +10,7 @@ import snapshot_enGB_Sunday_201812 from './snapshots/monthTemplate_en-GB_Sunday_
 
 describe('monthTemplate', () => {
   it('renders month table', async () => {
-    const date = new Date('2018-12-01');
+    const date = new Date('2018/12/01');
     const month = createMonth(date);
     const el = await fixture(
       monthTemplate(month, {

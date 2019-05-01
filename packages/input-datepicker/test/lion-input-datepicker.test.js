@@ -77,7 +77,7 @@ describe('<lion-input-datepicker>', () => {
       const elObj = new DatepickerInputObject(
         await fixture(
           html`
-            <lion-input-datepicker .modelValue="${new Date('2020-02-15')}"></lion-input-datepicker>
+            <lion-input-datepicker .modelValue="${new Date('2020/02/15')}"></lion-input-datepicker>
           `,
         ),
       );

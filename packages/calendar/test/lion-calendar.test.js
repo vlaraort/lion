@@ -23,7 +23,7 @@ describe('<lion-calendar>', () => {
   let clock;
 
   beforeEach(() => {
-    clock = sinon.useFakeTimers({ now: 976838400000 }); // new Date('2000-12-15')
+    clock = sinon.useFakeTimers({ now: 976838400000 }); // new Date('2000/12/15')
     localizeTearDown();
   });
 
@@ -134,8 +134,8 @@ describe('<lion-calendar>', () => {
       it('disables all days after "maxDate" property', async () => {
         const el = await fixture(html`
           <lion-calendar
-            .selectedDate="${new Date('2000-12-01')}"
-            .maxDate="${new Date('2000-12-09')}"
+            .selectedDate="${new Date('2000/12/01')}"
+            .maxDate="${new Date('2000/12/09')}"
           >
           </lion-calendar>
         `);
@@ -152,7 +152,7 @@ describe('<lion-calendar>', () => {
         const el = await fixture(
           html`
             <lion-calendar
-              .selectedDate="${new Date('2000-12-01')}"
+              .selectedDate="${new Date('2000/12/01')}"
               .enabledDates=${no15th}
             ></lion-calendar>
           `,
@@ -163,7 +163,7 @@ describe('<lion-calendar>', () => {
           expect(new DayObject(d).disabled).to.equal(shouldBeDisabled);
         });
 
-        el.selectedDate = new Date('2000-11-01'); // When month view updates, it should still work
+        el.selectedDate = new Date('2000/11/01'); // When month view updates, it should still work
         await el.updateCompleted;
         elObj.days().forEach((d, i) => {
           const shouldBeDisabled = i === 15 - 1;
@@ -184,7 +184,7 @@ describe('<lion-calendar>', () => {
       it('contains secondary title displaying the current month and year in focus', async () => {
         const el = await fixture(
           html`
-            <lion-calendar .selectedDate="${new Date('2000-12-12')}"></lion-calendar>
+            <lion-calendar .selectedDate="${new Date('2000/12/12')}"></lion-calendar>
           `,
         );
         const elObj = new CalendarObject(el);
@@ -194,11 +194,11 @@ describe('<lion-calendar>', () => {
       it('updates the secondary title when the displayed month/year changes', async () => {
         const el = await fixture(
           html`
-            <lion-calendar .selectedDate="${new Date('2000-12-12')}"></lion-calendar>
+            <lion-calendar .selectedDate="${new Date('2000/12/12')}"></lion-calendar>
           `,
         );
         const elObj = new CalendarObject(el);
-        el.selectedDate = new Date('1999-10-12');
+        el.selectedDate = new Date('1999/10/12');
         await el.updateCompleted;
         expect(elObj.monthHeading()).lightDom.to.equal('October 1999');
       });
@@ -221,7 +221,7 @@ describe('<lion-calendar>', () => {
       it('has a button for navigation to previous month', async () => {
         const el = await fixture(
           html`
-            <lion-calendar .selectedDate="${new Date('2001-01-01')}"></lion-calendar>
+            <lion-calendar .selectedDate="${new Date('2001/01/01')}"></lion-calendar>
           `,
         );
         const elObj = new CalendarObject(el);
@@ -289,7 +289,7 @@ describe('<lion-calendar>', () => {
           // proper UX (and a11y?).
           // TODO: reconsider when tooltip in Overlay System finished
           const el = await fixture(html`
-            <lion-calendar .selectedDate="${new Date('2000-12-12')}"></lion-calendar>
+            <lion-calendar .selectedDate="${new Date('2000/12/12')}"></lion-calendar>
           `);
           const elObj = new CalendarObject(el);
           expect(elObj.prevMonthButton().getAttribute('title')).to.equal('Previous Month');
@@ -303,7 +303,7 @@ describe('<lion-calendar>', () => {
     it('renders the days of the week as table headers', async () => {
       const el = await fixture(
         html`
-          <lion-calendar .selectedDate="${new Date('2000-12-12')}"></lion-calendar>
+          <lion-calendar .selectedDate="${new Date('2000/12/12')}"></lion-calendar>
         `,
       );
       const elObj = new CalendarObject(el);
@@ -322,7 +322,7 @@ describe('<lion-calendar>', () => {
       it('adds "current" modifier to current date (today)', async () => {
         const el = await fixture(
           html`
-            <lion-calendar .selectedDate="${new Date('2000-12-12')}"></lion-calendar>
+            <lion-calendar .selectedDate="${new Date('2000/12/12')}"></lion-calendar>
           `,
         );
         const elObj = new CalendarObject(el);
@@ -343,14 +343,14 @@ describe('<lion-calendar>', () => {
         const elObj = new CalendarObject(el);
         expect(elObj.checkForAllDays(d => d.selected, [12])).to.equal(true);
 
-        el.selectedDate = new Date('2000-12-15');
+        el.selectedDate = new Date('2000/12/15');
         await el.updateCompleted;
         expect(elObj.checkForAllDays(d => d.selected, [15])).to.equal(true);
       });
 
       it('adds "focused" modifier to focused date', async () => {
         const el = await fixture(html`
-          <lion-calendar .selectedDate="${new Date('2000-12-12')}"></lion-calendar>
+          <lion-calendar .selectedDate="${new Date('2000/12/12')}"></lion-calendar>
         `);
         const elObj = new CalendarObject(el);
         expect(elObj.checkForAllDays(d => d.focused, [12])).to.equal(true);
@@ -359,9 +359,9 @@ describe('<lion-calendar>', () => {
       it('adds "disabled" modifier to disabled dates', async () => {
         const el = await fixture(html`
           <lion-calendar
-            .selectedDate="${new Date('2000-12-10')}"
-            .minDate="${new Date('2000-12-03')}"
-            .maxDate="${new Date('2000-12-29')}"
+            .selectedDate="${new Date('2000/12/10')}"
+            .minDate="${new Date('2000/12/03')}"
+            .maxDate="${new Date('2000/12/29')}"
           >
           </lion-calendar>
         `);
@@ -388,7 +388,7 @@ describe('<lion-calendar>', () => {
         it('focused day is reachable via tab (tabindex="0")', async () => {
           const el = await fixture(
             html`
-              <lion-calendar .selectedDate="${new Date('2000-12-12')}"></lion-calendar>
+              <lion-calendar .selectedDate="${new Date('2000/12/12')}"></lion-calendar>
             `,
           );
           const elObj = new CalendarObject(el);
@@ -400,7 +400,7 @@ describe('<lion-calendar>', () => {
         it('non focused days are not reachable via tab (have tabindex="-1")', async () => {
           const el = await fixture(
             html`
-              <lion-calendar .selectedDate="${new Date('2000-12-12')}"></lion-calendar>
+              <lion-calendar .selectedDate="${new Date('2000/12/12')}"></lion-calendar>
             `,
           );
           const elObj = new CalendarObject(el);
@@ -415,8 +415,8 @@ describe('<lion-calendar>', () => {
         it('blocks navigation to disabled days', async () => {
           const el = await fixture(html`
             <lion-calendar
-              .selectedDate="${new Date('2000-12-31')}"
-              .minDate="${new Date('2000-12-09')}"
+              .selectedDate="${new Date('2000/12/31')}"
+              .minDate="${new Date('2000/12/09')}"
             >
             </lion-calendar>
           `);
@@ -433,7 +433,7 @@ describe('<lion-calendar>', () => {
           it('navigates (sets focus) to next row item via [arrow down] key', async () => {
             const el = await fixture(
               html`
-                <lion-calendar .selectedDate="${new Date('2000-12-12')}"></lion-calendar>
+                <lion-calendar .selectedDate="${new Date('2000/12/12')}"></lion-calendar>
               `,
             );
             const elObj = new CalendarObject(el);
@@ -445,7 +445,7 @@ describe('<lion-calendar>', () => {
           it('navigates (sets focus) to previous row item via [arrow up] key', async () => {
             const el = await fixture(
               html`
-                <lion-calendar .selectedDate="${new Date('2000-12-12')}"></lion-calendar>
+                <lion-calendar .selectedDate="${new Date('2000/12/12')}"></lion-calendar>
               `,
             );
             const elObj = new CalendarObject(el);
@@ -458,7 +458,7 @@ describe('<lion-calendar>', () => {
             // 2000-12-12 is Tuesday; at 2nd of row
             const el = await fixture(
               html`
-                <lion-calendar .selectedDate="${new Date('2000-12-12')}"></lion-calendar>
+                <lion-calendar .selectedDate="${new Date('2000/12/12')}"></lion-calendar>
               `,
             );
             const elObj = new CalendarObject(el);
@@ -471,7 +471,7 @@ describe('<lion-calendar>', () => {
             // 2000-12-12 is Tuesday; at 2nd of row
             const el = await fixture(
               html`
-                <lion-calendar .selectedDate="${new Date('2000-12-12')}"></lion-calendar>
+                <lion-calendar .selectedDate="${new Date('2000/12/12')}"></lion-calendar>
               `,
             );
             const elObj = new CalendarObject(el);
@@ -484,7 +484,7 @@ describe('<lion-calendar>', () => {
             // 2000-12-17 is Sunday; at end of row
             const el = await fixture(
               html`
-                <lion-calendar .selectedDate="${new Date('2000-12-17')}"></lion-calendar>
+                <lion-calendar .selectedDate="${new Date('2000/12/17')}"></lion-calendar>
               `,
             );
             const elObj = new CalendarObject(el);
@@ -499,7 +499,7 @@ describe('<lion-calendar>', () => {
             // 2000-12-11 is Monday; at start of row
             const el = await fixture(
               html`
-                <lion-calendar .selectedDate="${new Date('2000-12-11')}"></lion-calendar>
+                <lion-calendar .selectedDate="${new Date('2000/12/11')}"></lion-calendar>
               `,
             );
             const elObj = new CalendarObject(el);
@@ -513,7 +513,7 @@ describe('<lion-calendar>', () => {
           it('navigates to next month via [arrow right] key if last day of month', async () => {
             const el = await fixture(
               html`
-                <lion-calendar .selectedDate="${new Date('2000-12-31')}"></lion-calendar>
+                <lion-calendar .selectedDate="${new Date('2000/12/31')}"></lion-calendar>
               `,
             );
             const elObj = new CalendarObject(el);
@@ -529,7 +529,7 @@ describe('<lion-calendar>', () => {
           it('navigates to previous month via [arrow left] key if first day of month', async () => {
             const el = await fixture(
               html`
-                <lion-calendar .selectedDate="${new Date('2001-01-01')}"></lion-calendar>
+                <lion-calendar .selectedDate="${new Date('2001/01/01')}"></lion-calendar>
               `,
             );
             const elObj = new CalendarObject(el);
@@ -545,7 +545,7 @@ describe('<lion-calendar>', () => {
           it('navigates to next month via [arrow down] key if last row of month', async () => {
             const el = await fixture(
               html`
-                <lion-calendar .selectedDate="${new Date('2000-12-30')}"></lion-calendar>
+                <lion-calendar .selectedDate="${new Date('2000/12/30')}"></lion-calendar>
               `,
             );
             const elObj = new CalendarObject(el);
@@ -561,7 +561,7 @@ describe('<lion-calendar>', () => {
           it('navigates to previous month via [arrow up] key if first row of month', async () => {
             const el = await fixture(
               html`
-                <lion-calendar .selectedDate="${new Date('2001-01-02')}"></lion-calendar>
+                <lion-calendar .selectedDate="${new Date('2001/01/02')}"></lion-calendar>
               `,
             );
             const elObj = new CalendarObject(el);
@@ -578,7 +578,7 @@ describe('<lion-calendar>', () => {
         it('navigates through months with [pageup] [pagedown] keys', async () => {
           const el = await fixture(
             html`
-              <lion-calendar .selectedDate="${new Date('2001-01-02')}"></lion-calendar>
+              <lion-calendar .selectedDate="${new Date('2001/01/02')}"></lion-calendar>
             `,
           );
           const elObj = new CalendarObject(el);
@@ -601,7 +601,7 @@ describe('<lion-calendar>', () => {
         it('navigates through years with [alt + pageup] [alt + pagedown] keys', async () => {
           const el = await fixture(
             html`
-              <lion-calendar .selectedDate="${new Date('2001-01-02')}"></lion-calendar>
+              <lion-calendar .selectedDate="${new Date('2001/01/02')}"></lion-calendar>
             `,
           );
           const elObj = new CalendarObject(el);
@@ -743,7 +743,7 @@ describe('<lion-calendar>', () => {
         // 2000-11-12 results in: first 2 cells empty and last 3 cells empty
         const elObj = new CalendarObject(
           await fixture(html`
-            <lion-calendar .selectedDate="${new Date('2000-11-12')}"></lion-calendar>
+            <lion-calendar .selectedDate="${new Date('2000/11/12')}"></lion-calendar>
           `),
         );
         const cells = [].slice.call(elObj.grid().querySelectorAll('td'));
@@ -777,7 +777,7 @@ describe('<lion-calendar>', () => {
       it('sets aria-selected="true" on selected date button', async () => {
         const elObj = new CalendarObject(
           await fixture(html`
-            <lion-calendar .selectedDate="${new Date('2000-11-12')}"></lion-calendar>
+            <lion-calendar .selectedDate="${new Date('2000/11/12')}"></lion-calendar>
           `),
         );
         const hasAriaSelected = d => d.button().getAttribute('aria-selected') === 'true';
@@ -797,7 +797,7 @@ describe('<lion-calendar>', () => {
         "{day number} {month name} {year} {weekday name}"`, async () => {
         const elObj = new CalendarObject(
           await fixture(html`
-            <lion-calendar .selectedDate="${new Date('2000-11-12')}"></lion-calendar>
+            <lion-calendar .selectedDate="${new Date('2000/11/12')}"></lion-calendar>
           `),
         );
         expect(
