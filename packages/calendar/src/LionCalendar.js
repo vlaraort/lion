@@ -109,7 +109,12 @@ export class LionCalendar extends LitElement {
     // eslint-disable-next-line wc/guard-super-call
     super.connectedCallback();
 
-    // Triggers render function
+    this.connected = true;
+
+    // calculate correct focusDate based on user provided enabledDates
+    this.focusDate = this.selectedDate;
+
+    // setup data for initial render
     this._monthsData = this.createMonth();
   }
 
@@ -167,19 +172,32 @@ export class LionCalendar extends LitElement {
 
   _requestUpdate(name, oldValue) {
     super._requestUpdate(name, oldValue);
-    const updateDataOn = ['minDate', 'maxDate', 'focusDate', 'hoverDate', 'selectedDate'];
+    const updateDataOn = [
+      'minDate',
+      'maxDate',
+      'focusDate',
+      'hoverDate',
+      'selectedDate',
+      'enabledDates',
+    ];
 
     const map = {
       selectedDate: () => this._selectedDateChanged(),
       focusDate: () => this._focusDateChanged(),
+      enabledDates: () => this._enabledDatesChanged(),
     };
     if (map[name]) {
       map[name]();
     }
 
-    if (updateDataOn.includes(name) && this._monthsData.weeks) {
+    if (updateDataOn.includes(name) && this.connected) {
       this._monthsData = this.createMonth();
     }
+  }
+
+  _enabledDatesChanged() {
+    // make sure focusDate is still valid
+    this._focusDateChanged();
   }
 
   _selectedDateChanged() {
@@ -188,25 +206,41 @@ export class LionCalendar extends LitElement {
   }
 
   _focusDateChanged() {
-    if (!this.isValidFocusDate(this.focusDate)) {
+    if (this.connected && !this.isValidFocusDate(this.focusDate)) {
       this.focusDate = this.findBestValidFocusDateFor(this.focusDate);
     }
   }
 
   isValidFocusDate(focusDate) {
-    const { minDate, maxDate } = this;
-    if (maxDate && focusDate > maxDate) {
-      return false;
-    }
-    if (minDate && focusDate < minDate) {
-      return false;
-    }
-    return true;
+    const processedDay = this._dayPreprocessor({ date: focusDate });
+    return !processedDay.disabled;
   }
 
-  // eslint-disable-next-line class-methods-use-this
-  findBestValidFocusDateFor() {
-    throw new Error('not yet implemented');
+  findBestValidFocusDateFor(focusDate) {
+    const futureDate =
+      this.minDate && this.minDate > focusDate ? new Date(this.minDate) : new Date(focusDate);
+    const pastDate =
+      this.maxDate && this.maxDate < focusDate ? new Date(this.maxDate) : new Date(focusDate);
+
+    let i = 0;
+    do {
+      i += 1;
+      futureDate.setDate(futureDate.getDate() + 1);
+      pastDate.setDate(pastDate.getDate() - 1);
+      if (this.isValidFocusDate(futureDate)) {
+        return futureDate;
+      }
+      if (this.isValidFocusDate(pastDate)) {
+        return pastDate;
+      }
+    } while (i < 3650);
+
+    const year = this.focusDate.getFullYear();
+    const month = this.focusDate.getMonth() + 1;
+    const day = this.focusDate.getDate();
+    throw new Error(
+      `Could not find a valid focus date within +/- 3650 day for ${year}/${month}/${day}`,
+    );
   }
 
   headerTemplate() {
