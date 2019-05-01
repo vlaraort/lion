@@ -170,6 +170,7 @@ export class LionCalendar extends LionLitElement {
 
   _selectedDateChanged() {
     this.focusDate = this.selectedDate;
+    this.dispatchEvent(new CustomEvent('selected-date-changed', { bubbles: true }));
   }
 
   _focusDateChanged() {
