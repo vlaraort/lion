@@ -6,6 +6,7 @@ import { headerTemplate } from './utils/headerTemplate.js';
 import { monthTemplate } from './utils/monthTemplate.js';
 import { calendarStyles } from './calendarStyles.js';
 import { getFirstDayNextMonth, getLastDayPreviousMonth } from '../../localize/src/date/helpers.js';
+import { dayTemplate } from './utils/dayTemplate.js';
 
 /**
  * @customElement
@@ -195,22 +196,35 @@ export class LionCalendar extends LionLitElement {
     throw new Error('not yet implemented');
   }
 
+  headerTemplate() {
+    return headerTemplate(this.focusDate, {
+      monthsLabels: this._i18n.months,
+      nextMonth: this.nextMonth,
+      nextMonthDisabled: this._nextMonthDisabled,
+      previousMonth: this.previousMonth,
+      previousMonthDisabled: this._previousMonthDisabled,
+    });
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  dayTemplate(...params) {
+    return dayTemplate(...params);
+  }
+
+  monthTemplate() {
+    return monthTemplate(this._monthsData, {
+      monthsLabels: this._i18n.months,
+      focusDate: this.focusDate,
+      weekdaysShort: this._i18n.weekdaysShort,
+      weekdays: this._i18n.weekdays,
+      dayTemplate: this.dayTemplate,
+    });
+  }
+
   render() {
     return html`
       <div id="calendar" class="calendar">
-        ${headerTemplate(this.focusDate, {
-          monthsLabels: this._i18n.months,
-          nextMonth: this.nextMonth,
-          nextMonthDisabled: this._nextMonthDisabled,
-          previousMonth: this.previousMonth,
-          previousMonthDisabled: this._previousMonthDisabled,
-        })}
-        ${monthTemplate(this._monthsData, {
-          monthsLabels: this._i18n.months,
-          focusDate: this.focusDate,
-          weekdaysShort: this._i18n.weekdaysShort,
-          weekdays: this._i18n.weekdays,
-        })}
+        ${this.headerTemplate()} ${this.monthTemplate()}
       </div>
     `;
   }
