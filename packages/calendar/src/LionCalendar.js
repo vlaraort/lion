@@ -1,16 +1,21 @@
-import { html } from '@lion/core';
-import { LionLitElement } from '@lion/core/src/LionLitElement.js';
-import { localize, getWeekdayNames, getMonthNames, isSameDay } from '@lion/localize';
+import { html, LitElement } from '@lion/core';
+import {
+  localize,
+  getWeekdayNames,
+  getMonthNames,
+  isSameDay,
+  getFirstDayNextMonth,
+  getLastDayPreviousMonth,
+} from '@lion/localize';
 import { createMonth } from './utils/createMonth.js';
 import { monthTemplate } from './utils/monthTemplate.js';
 import { calendarStyles } from './calendarStyles.js';
-import { getFirstDayNextMonth, getLastDayPreviousMonth } from '../../localize/src/date/helpers.js';
 import { dayTemplate } from './utils/dayTemplate.js';
 
 /**
  * @customElement
  */
-export class LionCalendar extends LionLitElement {
+export class LionCalendar extends LitElement {
   static get styles() {
     return [calendarStyles];
   }
