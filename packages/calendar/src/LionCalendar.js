@@ -373,7 +373,9 @@ export class LionCalendar extends LitElement {
     const days = this.shadowRoot.getElementById('calendar__days');
 
     this.__leaveEvent = days.addEventListener('mouseleave', () => {
-      this.hoverDate = null;
+      setTimeout(() => {
+        this.hoverDate = null;
+      }, 16); // set after debounced event
     });
   }
 
