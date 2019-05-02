@@ -114,6 +114,7 @@ export class LionCalendar extends LitElement {
     // eslint-disable-next-line wc/guard-super-call
     super.connectedCallback();
 
+    // TODO: why public?
     this.connected = true;
 
     // calculate correct focusDate based on user provided enabledDates
@@ -123,39 +124,23 @@ export class LionCalendar extends LitElement {
     this._monthsData = this.createMonth();
   }
 
-<<<<<<< HEAD
+  /**
+   * @override
+   * @param { Map } c - changed propeties
+   */
+  updated(c) {
+    super.updated();
+    if (c.has('_monthsData')) {
+      // Reapply keyboard interaction behavior on every render
+      this._grid = new AriaGridBehavior(this.shadowRoot.querySelector('[role="grid"]'));
+    }
+  }
+
   firstUpdated() {
     super.firstUpdated();
     this.__addEventDelegationForHoverDate();
   }
 
-=======
-
-  /**
-   * @override
-   * @param {Map} c - changed properties
-   */
-  updated(c) {
-    super.updated(c);
-
-    if(c.has('_monthsData')) {
-      this._addGridBehavior();
-    }
-  }
-
-  /**
-   * Every render, a new month is changed. Applies the aria grid behavior (keyboard interaction
-   * and aria attrs) to the currently active month grid.
-   * By separating the logic from the html template, we separate logic from markup
-   * (which makes the templates highly reusable and suitable to override on extension layers)
-   * and we reuse our logic AriaGridBehavior in multiple components needing role="grid"
-   */
-  _addGridBehavior() { // eslint-disable-line class-methods-use-this
-    this._ariaGrid = new AriaGridBehavior(this.shadowRoot.querySelector('[role="grid"]'));
-  }
-
-  // TODO: why public?
->>>>>>> chore(calendar): keyboard behavior wip
   createMonth() {
     const month = createMonth(this.focusDate, { firstDayOfWeek: this.firstDayOfWeek });
     month.weeks.forEach((week, weeki) => {
@@ -183,7 +168,7 @@ export class LionCalendar extends LitElement {
     day.current = isSameDay(day.date, new Date());
     day.hovered = this.hoverDate ? isSameDay(day.date, this.hoverDate) : false;
     // call enabledDays
-    day.disabled = Math.random() > 0.5; // !this.enabledDates(day.date);
+    day.disabled = !this.enabledDates(day.date); // Math.random() > 0.5;
 
     if (this.minDate && day.date < this.minDate) {
       day.disabled = true;
@@ -210,7 +195,6 @@ export class LionCalendar extends LitElement {
    */
   _requestUpdate(name, oldValue) {
     super._requestUpdate(name, oldValue);
-<<<<<<< HEAD
     const updateDataOn = [
       'minDate',
       'maxDate',
@@ -230,28 +214,6 @@ export class LionCalendar extends LitElement {
     }
 
     if (updateDataOn.includes(name) && this.connected) {
-=======
-    // const updateDataOn = ['minDate', 'maxDate', 'focusDate', 'selectedDate'];
-
-    // const map = {
-    //   selectedDate: () => this._selectedDateChanged(),
-    //   focusDate: () => this._focusDateChanged(),
-    // };
-    // if (map[name]) {
-    //   map[name]();
-    // }
-
-    if (name === 'selectedDate') {
-      this._selectedDateChanged();
-    } else
-    if (name === 'focusDate') {
-      this._focusDateChanged();
-    }
-
-    const updateDataOn = ['minDate', 'maxDate', 'focusDate', 'selectedDate'];
-    // TODO: why _monthsData.weeks check?
-    if (updateDataOn.includes(name) && this._monthsData.weeks) {
->>>>>>> chore(calendar): keyboard behavior wip
       this._monthsData = this.createMonth();
     }
   }
@@ -279,7 +241,6 @@ export class LionCalendar extends LitElement {
     return !processedDay.disabled;
   }
 
-<<<<<<< HEAD
   findBestValidFocusDateFor(focusDate) {
     const futureDate =
       this.minDate && this.minDate > focusDate ? new Date(this.minDate) : new Date(focusDate);
@@ -305,12 +266,6 @@ export class LionCalendar extends LitElement {
     throw new Error(
       `Could not find a valid focus date within +/- 3650 day for ${year}/${month}/${day}`,
     );
-=======
-  // TODO: Why public? See no reason to override...
-  // eslint-disable-next-line class-methods-use-this
-  findBestValidFocusDateFor() {
-    throw new Error('not yet implemented');
->>>>>>> chore(calendar): keyboard behavior wip
   }
 
   headerTemplate() {
