@@ -196,14 +196,12 @@ export class LionCalendar extends LitElement {
   }
 
   nextMonth() {
-    this.focusDate = new Date(this.focusDate.setMonth(this.focusDate.getMonth() + 1));
     const tmpDate = new Date(this.focusDate);
     tmpDate.setMonth(tmpDate.getMonth() + 1);
     this.focusDate = tmpDate;
   }
 
   previousMonth() {
-    this.focusDate = new Date(this.focusDate.setMonth(this.focusDate.getMonth() - 1));
     const tmpDate = new Date(this.focusDate);
     tmpDate.setMonth(tmpDate.getMonth() - 1);
     this.focusDate = tmpDate;
