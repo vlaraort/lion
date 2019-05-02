@@ -12,8 +12,6 @@ import { monthTemplate } from './utils/monthTemplate.js';
 import { calendarStyles } from './calendarStyles.js';
 import { dayTemplate } from './utils/dayTemplate.js';
 
-import { AriaGridBehavior } from './aria/aria-grid-behavior.js';
-
 /**
  * @customElement
  */
@@ -131,22 +129,11 @@ export class LionCalendar extends LitElement {
     this.__removeEventDelegations();
   }
 
-  /**
-   * @override
-   * @param { Map } c - changed propeties
-   */
-  updated(c) {
-    super.updated();
-    if (c.has('_monthsData')) {
-      // Reapply keyboard interaction behavior on every render
-      this._grid = new AriaGridBehavior(this.shadowRoot.querySelector('[role="grid"]'));
-    }
-  }
-
   firstUpdated() {
     super.firstUpdated();
     this.__addEventDelegationForHoverDate();
     this.__addEventDelegationForClickDate();
+    this.__addEventForKeyboardNavigation();
   }
 
   createMonth() {
@@ -164,6 +151,13 @@ export class LionCalendar extends LitElement {
       this.minDate && getLastDayPreviousMonth(this.focusDate) < this.minDate;
 
     return month;
+  }
+
+  modifyFocusDay(modify, { type = 'Date' } = {}) {
+    const tmpDate = new Date(this.focusDate);
+    tmpDate[`set${type}`](tmpDate[`get${type}`]() + modify);
+
+    this.focusDate = tmpDate;
   }
 
   // TODO: rename to _customDayPreprocessor. Confusing to give default preprocessor and custom
@@ -195,16 +189,12 @@ export class LionCalendar extends LitElement {
     return day;
   }
 
-  nextMonth() {
-    const tmpDate = new Date(this.focusDate);
-    tmpDate.setMonth(tmpDate.getMonth() + 1);
-    this.focusDate = tmpDate;
+  _nextButtonClick() {
+    this.modifyFocusDay(1, { type: 'Month' });
   }
 
-  previousMonth() {
-    const tmpDate = new Date(this.focusDate);
-    tmpDate.setMonth(tmpDate.getMonth() - 1);
-    this.focusDate = tmpDate;
+  _previousButtonClick() {
+    this.modifyFocusDay(-1, { type: 'Month' });
   }
 
   /**
@@ -308,7 +298,7 @@ export class LionCalendar extends LitElement {
         class="calendar__prev-month-button"
         aria-label="Previous month"
         title="Previous month"
-        @click=${this.previousMonth}
+        @click=${this._previousButtonClick}
         ?disabled=${this._previousMonthDisabled}
       >
         &lt;
@@ -322,7 +312,7 @@ export class LionCalendar extends LitElement {
         class="calendar__next-month-button"
         aria-label="Next month"
         title="Next month"
-        @click=${this.nextMonth}
+        @click=${this._nextButtonClick}
         ?disabled=${this._nextMonthDisabled}
       >
         &gt;
@@ -405,5 +395,39 @@ export class LionCalendar extends LitElement {
     calendar.removeEventListener('mouseover', this.__hoverDateDelegation);
     calendar.removeEventListener('mouseleave', this.__leaveEvent);
     calendar.removeEventListener('click', this.__clickDateDelegation);
+  }
+
+  __addEventForKeyboardNavigation() {
+    this.addEventListener('keydown', ev => {
+      switch (ev.key) {
+        case 'ArrowUp':
+          this.modifyFocusDay(-7);
+          break;
+        case 'ArrowDown':
+          this.modifyFocusDay(7);
+          break;
+        case 'ArrowLeft':
+          this.modifyFocusDay(-1);
+          break;
+        case 'ArrowRight':
+          this.modifyFocusDay(1);
+          break;
+        case 'PageDown':
+          if (ev.altKey === true) {
+            this.modifyFocusDay(1, { type: 'FullYear' });
+          } else {
+            this.modifyFocusDay(1, { type: 'Month' });
+          }
+          break;
+        case 'PageUp':
+          if (ev.altKey === true) {
+            this.modifyFocusDay(-1, { type: 'FullYear' });
+          } else {
+            this.modifyFocusDay(-1, { type: 'Month' });
+          }
+          break;
+        // no default
+      }
+    });
   }
 }
