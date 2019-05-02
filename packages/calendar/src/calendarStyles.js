@@ -56,7 +56,7 @@ export const calendarStyles = css`
     border: 1px solid #333;
   }
 
-  .calendar__day[current] > button {
+  .calendar__day[today] > button {
     text-decoration: underline;
   }
 
