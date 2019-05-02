@@ -69,10 +69,8 @@ export const calendarStyles = css`
     border: 1px solid #fff;
   }
 
-  .calendar__day--padding {
-  }
-  .calendar__day--prev-month {
-  }
-  .calendar__day--next-month {
+  .calendar__day[previous-month] > button,
+  .calendar__day[next-month] > button {
+    color: #ccc;
   }
 `;
