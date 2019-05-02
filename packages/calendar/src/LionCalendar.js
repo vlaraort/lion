@@ -151,7 +151,6 @@ export class LionCalendar extends LitElement {
    * and we reuse our logic AriaGridBehavior in multiple components needing role="grid"
    */
   _addGridBehavior() { // eslint-disable-line class-methods-use-this
-    console.log(this.shadowRoot.querySelector('[role="grid"]'));
     this._ariaGrid = new AriaGridBehavior(this.shadowRoot.querySelector('[role="grid"]'));
   }
 
@@ -184,7 +183,7 @@ export class LionCalendar extends LitElement {
     day.current = isSameDay(day.date, new Date());
     day.hovered = this.hoverDate ? isSameDay(day.date, this.hoverDate) : false;
     // call enabledDays
-    day.disabled = !this.enabledDates(day.date);
+    day.disabled = Math.random() > 0.5; // !this.enabledDates(day.date);
 
     if (this.minDate && day.date < this.minDate) {
       day.disabled = true;
