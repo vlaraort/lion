@@ -167,7 +167,7 @@ export class LionCalendar extends LitElement {
     const today = new Date();
     day.previousMonth = day.date.getMonth() < this.focusDate.getMonth();
     day.currentMonth = day.date.getMonth() === this.focusDate.getMonth();
-    day.nextMonth = !day.previousMonth;
+    day.nextMonth = day.date.getMonth() > this.focusDate.getMonth();
     day.selected = isSameDay(day.date, this.selectedDate);
     day.focused = isSameDay(day.date, this.focusDate);
     day.past = day.date < today;
