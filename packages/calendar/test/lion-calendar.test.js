@@ -1,21 +1,13 @@
 import { expect, fixture, aTimeout } from '@open-wc/testing';
 import sinon from 'sinon';
-import { keyDownOn } from '@polymer/iron-test-helpers/mock-interactions.js';
 
 import { html } from '@lion/core';
 import { localize } from '@lion/localize';
 import { localizeTearDown } from '@lion/localize/test-helpers.js';
 
-import { CalendarObject, DayObject, keyCodes } from './test-utils.js';
+import { CalendarObject, DayObject } from './test-utils.js';
 
 import '../lion-calendar.js';
-
-// TODO:
-// Disclaimer: these specs are written without running them, and serve as a specific guide
-// for implementation. Expect some possible adjustments to make all specs run.
-// In particular, check:
-// - for "keyDownOn(el, keyCodes.pageup, 'alt');" -> is alt modifier syntax correct?
-// - test utils "CalendarObject" and "DayObject" may need some small changes (since not tested out)
 
 describe('<lion-calendar>', () => {
   beforeEach(() => {
@@ -379,27 +371,23 @@ describe('<lion-calendar>', () => {
 
       describe('Keyboard Navigation', () => {
         it('focused day is reachable via tab (tabindex="0")', async () => {
-          const el = await fixture(
-            html`
-              <lion-calendar .selectedDate="${new Date('2000/12/12')}"></lion-calendar>
-            `,
-          );
+          const el = await fixture(html`
+            <lion-calendar .selectedDate="${new Date('2000/12/12')}"></lion-calendar>
+          `);
           const elObj = new CalendarObject(el);
-          expect(elObj.checkForAllDays(d => d.el.getAttribute('tabindex') === '0', [12])).to.equal(
-            true,
-          );
+          expect(
+            elObj.checkForAllDays(d => d.button().getAttribute('tabindex') === '0', [12]),
+          ).to.equal(true);
         });
 
         it('non focused days are not reachable via tab (have tabindex="-1")', async () => {
-          const el = await fixture(
-            html`
-              <lion-calendar .selectedDate="${new Date('2000/12/12')}"></lion-calendar>
-            `,
-          );
+          const el = await fixture(html`
+            <lion-calendar .selectedDate="${new Date('2000/12/12')}"></lion-calendar>
+          `);
           const elObj = new CalendarObject(el);
           expect(
             elObj.checkForAllDays(
-              d => d.el.getAttribute('tabindex') === '-1',
+              d => d.button().getAttribute('tabindex') === '-1',
               dayNumber => dayNumber !== 12,
             ),
           ).to.equal(true);
@@ -416,214 +404,177 @@ describe('<lion-calendar>', () => {
           const elObj = new CalendarObject(el);
           expect(
             elObj.checkForAllDays(
-              d => d.el.getAttribute('tabindex') === '-1',
+              d => d.button().getAttribute('tabindex') === '-1',
               dayNumber => dayNumber < 9,
             ),
           ).to.equal(true);
         });
 
+        it('navigates through months with [pageup] [pagedown] keys', async () => {
+          const el = await fixture(html`
+            <lion-calendar .selectedDate="${new Date('2001/01/02')}"></lion-calendar>
+          `);
+          const elObj = new CalendarObject(el);
+          expect(elObj.monthHeading()).lightDom.to.equal('January 2001');
+
+          el.dispatchEvent(new KeyboardEvent('keydown', { key: 'PageUp' }));
+          await el.updateCompleted;
+          expect(elObj.monthHeading()).lightDom.to.equal('December 2000');
+
+          el.dispatchEvent(new KeyboardEvent('keydown', { key: 'PageDown' }));
+          await el.updateCompleted;
+          expect(elObj.monthHeading()).lightDom.to.equal('January 2001');
+        });
+
+        it('navigates through years with [alt + pageup] [alt + pagedown] keys', async () => {
+          const el = await fixture(html`
+            <lion-calendar .selectedDate="${new Date('2001/01/02')}"></lion-calendar>
+          `);
+          const elObj = new CalendarObject(el);
+          expect(elObj.monthHeading()).lightDom.to.equal('January 2001');
+
+          el.dispatchEvent(new KeyboardEvent('keydown', { key: 'PageDown', altKey: true }));
+          await el.updateCompleted;
+          expect(elObj.monthHeading()).lightDom.to.equal('January 2002');
+
+          el.dispatchEvent(new KeyboardEvent('keydown', { key: 'PageUp', altKey: true }));
+          await el.updateCompleted;
+          expect(elObj.monthHeading()).lightDom.to.equal('January 2001');
+        });
+
         describe('Arrow keys', () => {
           it('navigates (sets focus) to next row item via [arrow down] key', async () => {
-            const el = await fixture(
-              html`
-                <lion-calendar .selectedDate="${new Date('2000/12/12')}"></lion-calendar>
-              `,
-            );
+            const el = await fixture(html`
+              <lion-calendar .selectedDate="${new Date('2001/01/02')}"></lion-calendar>
+            `);
             const elObj = new CalendarObject(el);
-            keyDownOn(el, keyCodes.down);
+
+            el.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown' }));
             await el.updateCompleted;
-            expect(elObj.focusedDayObj.monthday).to.equal(12 + 7);
+            expect(elObj.focusedDayObj().monthday).to.equal(2 + 7);
           });
 
           it('navigates (sets focus) to previous row item via [arrow up] key', async () => {
-            const el = await fixture(
-              html`
-                <lion-calendar .selectedDate="${new Date('2000/12/12')}"></lion-calendar>
-              `,
-            );
+            const el = await fixture(html`
+              <lion-calendar .selectedDate="${new Date('2001/01/02')}"></lion-calendar>
+            `);
             const elObj = new CalendarObject(el);
-            keyDownOn(el, keyCodes.up);
+
+            el.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowUp' }));
             await el.updateCompleted;
-            expect(elObj.focusedDayObj.monthday).to.equal(12 - 7);
+            expect(elObj.focusedDayObj().monthday).to.equal(26); // of month before
           });
 
           it('navigates (sets focus) to previous column item via [arrow left] key', async () => {
             // 2000-12-12 is Tuesday; at 2nd of row
-            const el = await fixture(
-              html`
-                <lion-calendar .selectedDate="${new Date('2000/12/12')}"></lion-calendar>
-              `,
-            );
+            const el = await fixture(html`
+              <lion-calendar .selectedDate="${new Date('2000/12/12')}"></lion-calendar>
+            `);
             const elObj = new CalendarObject(el);
-            keyDownOn(el, keyCodes.left);
+
+            el.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowLeft' }));
             await el.updateCompleted;
-            expect(elObj.focusedDayObj.monthday).to.equal(12 - 1);
+            expect(elObj.focusedDayObj().monthday).to.equal(12 - 1);
           });
 
           it('navigates (sets focus) to next column item via [arrow right] key', async () => {
             // 2000-12-12 is Tuesday; at 2nd of row
-            const el = await fixture(
-              html`
-                <lion-calendar .selectedDate="${new Date('2000/12/12')}"></lion-calendar>
-              `,
-            );
+            const el = await fixture(html`
+              <lion-calendar .selectedDate="${new Date('2000/12/12')}"></lion-calendar>
+            `);
             const elObj = new CalendarObject(el);
-            keyDownOn(el, keyCodes.right);
+
+            el.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight' }));
             await el.updateCompleted;
-            expect(elObj.focusedDayObj.monthday).to.equal(12 + 1);
+            expect(elObj.focusedDayObj().monthday).to.equal(12 + 1);
           });
 
           it('navigates (sets focus) to next row via [arrow right] key if last item in row', async () => {
-            // 2000-12-17 is Sunday; at end of row
-            const el = await fixture(
-              html`
-                <lion-calendar .selectedDate="${new Date('2000/12/17')}"></lion-calendar>
-              `,
-            );
+            const el = await fixture(html`
+              <lion-calendar .selectedDate="${new Date('2019/01/05')}"></lion-calendar>
+            `);
             const elObj = new CalendarObject(el);
-            expect(elObj.focusedDayObj.weekday).to.equal('Su');
-            keyDownOn(el, keyCodes.right);
+            expect(elObj.focusedDayObj().weekday).to.equal('Sat');
+
+            el.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight' }));
             await el.updateCompleted;
-            expect(elObj.focusedDayObj.monthday).to.equal(18);
-            expect(elObj.focusedDayObj.weekday).to.equal('Mo');
+            expect(elObj.focusedDayObj().monthday).to.equal(6);
+            expect(elObj.focusedDayObj().weekday).to.equal('Sun');
           });
 
           it('navigates (sets focus) to previous row via [arrow left] key if first item in row', async () => {
-            // 2000-12-11 is Monday; at start of row
-            const el = await fixture(
-              html`
-                <lion-calendar .selectedDate="${new Date('2000/12/11')}"></lion-calendar>
-              `,
-            );
+            const el = await fixture(html`
+              <lion-calendar .selectedDate="${new Date('2019/01/06')}"></lion-calendar>
+            `);
             const elObj = new CalendarObject(el);
-            expect(elObj.focusedDayObj.weekday).to.equal('Mo');
-            keyDownOn(el, keyCodes.left);
+            expect(elObj.focusedDayObj().weekday).to.equal('Sun');
+
+            el.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowLeft' }));
             await el.updateCompleted;
-            expect(elObj.focusedDayObj.monthday).to.equal(10);
-            expect(elObj.focusedDayObj.weekday).to.equal('Su');
+            expect(elObj.focusedDayObj().monthday).to.equal(5);
+            expect(elObj.focusedDayObj().weekday).to.equal('Sat');
           });
 
           it('navigates to next month via [arrow right] key if last day of month', async () => {
-            const el = await fixture(
-              html`
-                <lion-calendar .selectedDate="${new Date('2000/12/31')}"></lion-calendar>
-              `,
-            );
+            const el = await fixture(html`
+              <lion-calendar .selectedDate="${new Date('2000/12/31')}"></lion-calendar>
+            `);
             const elObj = new CalendarObject(el);
-            expect(elObj.activeMonth).to.equal('December');
-            expect(elObj.activeYear).to.equal('2000');
-            keyDownOn(el, keyCodes.right);
+            expect(elObj.monthHeading()).lightDom.to.equal('December 2000');
+
+            el.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight' }));
             await el.updateCompleted;
-            expect(elObj.activeMonth).to.equal('January');
-            expect(elObj.activeYear).to.equal('2001');
-            expect(elObj.focusedDayObj.monthday).to.equal(1);
+            expect(elObj.monthHeading()).lightDom.to.equal('January 2001');
+            expect(elObj.focusedDayObj().monthday).to.equal(1);
           });
 
           it('navigates to previous month via [arrow left] key if first day of month', async () => {
-            const el = await fixture(
-              html`
-                <lion-calendar .selectedDate="${new Date('2001/01/01')}"></lion-calendar>
-              `,
-            );
+            const el = await fixture(html`
+              <lion-calendar .selectedDate="${new Date('2001/01/01')}"></lion-calendar>
+            `);
             const elObj = new CalendarObject(el);
-            expect(elObj.activeMonth).to.equal('January');
-            expect(elObj.activeYear).to.equal('2001');
-            keyDownOn(el, keyCodes.right);
+            expect(elObj.monthHeading()).lightDom.to.equal('January 2001');
+
+            el.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowLeft' }));
             await el.updateCompleted;
-            expect(elObj.activeMonth).to.equal('December');
-            expect(elObj.activeYear).to.equal('2000');
-            expect(elObj.focusedDayObj.monthday).to.equal(1);
+            expect(elObj.monthHeading()).lightDom.to.equal('December 2000');
+            expect(elObj.focusedDayObj().monthday).to.equal(31);
           });
 
           it('navigates to next month via [arrow down] key if last row of month', async () => {
-            const el = await fixture(
-              html`
-                <lion-calendar .selectedDate="${new Date('2000/12/30')}"></lion-calendar>
-              `,
-            );
+            const el = await fixture(html`
+              <lion-calendar .selectedDate="${new Date('2000/12/30')}"></lion-calendar>
+            `);
             const elObj = new CalendarObject(el);
-            expect(elObj.activeMonth).to.equal('December');
-            expect(elObj.activeYear).to.equal('2000');
-            keyDownOn(el, keyCodes.down);
+            expect(elObj.monthHeading()).lightDom.to.equal('December 2000');
+
+            el.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown' }));
             await el.updateCompleted;
-            expect(elObj.activeMonth).to.equal('January');
-            expect(elObj.activeYear).to.equal('2001');
-            expect(elObj.focusedDayObj.monthday).to.equal(6);
+            expect(elObj.monthHeading()).lightDom.to.equal('January 2001');
+            expect(elObj.focusedDayObj().monthday).to.equal(6);
           });
 
           it('navigates to previous month via [arrow up] key if first row of month', async () => {
-            const el = await fixture(
-              html`
-                <lion-calendar .selectedDate="${new Date('2001/01/02')}"></lion-calendar>
-              `,
-            );
+            const el = await fixture(html`
+              <lion-calendar .selectedDate="${new Date('2001/01/02')}"></lion-calendar>
+            `);
             const elObj = new CalendarObject(el);
-            expect(elObj.activeMonth).to.equal('January');
-            expect(elObj.activeYear).to.equal('2001');
-            keyDownOn(el, keyCodes.up);
+            expect(elObj.monthHeading()).lightDom.to.equal('January 2001');
+
+            el.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowUp' }));
             await el.updateCompleted;
-            expect(elObj.activeMonth).to.equal('December');
-            expect(elObj.activeYear).to.equal('2000');
-            expect(elObj.focusedDayObj.monthday).to.equal(26);
+            expect(elObj.monthHeading()).lightDom.to.equal('December 2000');
+            expect(elObj.focusedDayObj().monthday).to.equal(26);
           });
-        });
-
-        it('navigates through months with [pageup] [pagedown] keys', async () => {
-          const el = await fixture(
-            html`
-              <lion-calendar .selectedDate="${new Date('2001/01/02')}"></lion-calendar>
-            `,
-          );
-          const elObj = new CalendarObject(el);
-          expect(elObj.activeMonth).to.equal('January');
-          keyDownOn(el, keyCodes.pageup);
-          await el.updateCompleted;
-          expect(elObj.activeMonth).to.equal('December');
-          keyDownOn(el, keyCodes.pageup);
-          await el.updateCompleted;
-          expect(elObj.activeMonth).to.equal('November');
-
-          keyDownOn(el, keyCodes.pagedown);
-          await el.updateCompleted;
-          expect(elObj.activeMonth).to.equal('December');
-          keyDownOn(el, keyCodes.pagedown);
-          await el.updateCompleted;
-          expect(elObj.activeMonth).to.equal('January');
-        });
-
-        it('navigates through years with [alt + pageup] [alt + pagedown] keys', async () => {
-          const el = await fixture(
-            html`
-              <lion-calendar .selectedDate="${new Date('2001/01/02')}"></lion-calendar>
-            `,
-          );
-          const elObj = new CalendarObject(el);
-          expect(elObj.activeMonth).to.equal('January');
-          keyDownOn(el, keyCodes.pageup, 'alt');
-          await el.updateCompleted;
-          expect(elObj.activeMonth).to.equal('December');
-          keyDownOn(el, keyCodes.pageup, 'alt');
-          await el.updateCompleted;
-          expect(elObj.activeMonth).to.equal('November');
-
-          keyDownOn(el, keyCodes.pagedown, 'alt');
-          await el.updateCompleted;
-          expect(elObj.activeMonth).to.equal('December');
-          keyDownOn(el, keyCodes.pagedown, 'alt');
-          await el.updateCompleted;
-          expect(elObj.activeMonth).to.equal('January');
         });
       });
 
       describe('Initial focus', () => {
         it('focused date is based on "selectedDate"', async () => {
-          const elObj = new CalendarObject(
-            await fixture(
-              html`
-                <lion-calendar .selectedDate=${new Date('2019/06/15')}></lion-calendar>
-              `,
-            ),
-          );
+          const el = await fixture(html`
+            <lion-calendar .selectedDate=${new Date('2019/06/15')}></lion-calendar>
+          `);
+          const elObj = new CalendarObject(el);
           expect(elObj.focusedDayObj().monthday).to.equal(15);
         });
 

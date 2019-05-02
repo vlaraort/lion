@@ -1,12 +1,3 @@
-export const keyCodes = {
-  pageup: 33,
-  pagedown: 34,
-  left: 37,
-  up: 38,
-  right: 39,
-  down: 40,
-};
-
 export const weekdaysShort = {
   'en-GB': {
     Sunday: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
