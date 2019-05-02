@@ -47,8 +47,8 @@ export class DayObject {
     return this.el.hasAttribute('selected');
   }
 
-  get current() {
-    return this.el.hasAttribute('disabled');
+  get today() {
+    return this.el.hasAttribute('today');
   }
 
   get focused() {
@@ -114,12 +114,12 @@ export class CalendarObject {
   }
 
   days() {
-    return [].slice.call(this.el.shadowRoot.querySelectorAll('.calendar__day--current-month'));
+    return [].slice.call(this.el.shadowRoot.querySelectorAll('.calendar__day[current-month]'));
   }
 
   day(monthDayNumber) {
     // Relies on the fact that empty cells don't have .calendar__day--current-month class
-    return this.el.shadowRoot.querySelectorAll('.calendar__day--current-month')[monthDayNumber - 1];
+    return this.el.shadowRoot.querySelectorAll('.calendar__day[current-month]')[monthDayNumber - 1];
   }
 
   dayObj(monthDayNumber) {

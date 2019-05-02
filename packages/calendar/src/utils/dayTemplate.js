@@ -1,4 +1,4 @@
-import { html, classMap, ifDefined } from '@lion/core';
+import { html, ifDefined } from '@lion/core';
 
 const defaultMonthLabels = [
   'January',
@@ -24,28 +24,33 @@ export function dayTemplate(
     monthsLabels = defaultMonthLabels,
   } = {},
 ) {
-  const classes = {
-    calendar__day: true,
-    'calendar__day--current-month': !day.otherMonth,
-    'calendar__day--other-month': day.otherMonth,
-  };
   const dayNumber = day.date.getDate();
   const monthName = monthsLabels[day.date.getMonth()];
   const year = day.date.getFullYear();
   const weekDay = weekdays[day.date.getDay()];
   return html`
     <td
-      class=${classMap(classes)}
-      .selected=${day.selected}
-      ?selected=${day.selected}
+      class="calendar__day"
       .disabled=${day.disabled}
       ?disabled=${day.disabled}
+      .selected=${day.selected}
+      ?selected=${day.selected}
       .focused=${day.focused}
       ?focused=${day.focused}
-      .current=${day.current}
-      ?current=${day.current}
       .hovered=${day.hovered}
       ?hovered=${day.hovered}
+      .past=${day.past}
+      ?past=${day.past}
+      .today=${day.today}
+      ?today=${day.today}
+      .future=${day.future}
+      ?future=${day.future}
+      .previousMonth=${day.previousMonth}
+      ?previous-month=${day.previousMonth}
+      .currentMonth=${day.currentMonth}
+      ?current-month=${day.currentMonth}
+      .nextMonth=${day.nextMonth}
+      ?next-month=${day.nextMonth}
       .date=${day.date}
     >
       <button
@@ -53,7 +58,7 @@ export function dayTemplate(
         tabindex=${day.selected ? '0' : '-1'}
         aria-label=${`${dayNumber} ${monthName} ${year} ${weekDay}`}
         aria-selected=${day.selected ? 'true' : 'false'}
-        aria-current=${ifDefined(day.current ? 'date' : undefined)}
+        aria-current=${ifDefined(day.today ? 'date' : undefined)}
         ?disabled=${day.disabled || day.otherMonth}
         .date=${day.date}
       >

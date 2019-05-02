@@ -162,10 +162,15 @@ export class LionCalendar extends LitElement {
   // similar names
   _dayPreprocessor(_day) {
     let day = _day;
-    day.otherMonth = day.date.getMonth() !== this.focusDate.getMonth();
+    const today = new Date();
+    day.previousMonth = day.date.getMonth() < this.focusDate.getMonth();
+    day.currentMonth = day.date.getMonth() === this.focusDate.getMonth();
+    day.nextMonth = !day.previousMonth;
     day.selected = isSameDay(day.date, this.selectedDate);
     day.focused = isSameDay(day.date, this.focusDate);
-    day.current = isSameDay(day.date, new Date());
+    day.past = day.date < today;
+    day.today = isSameDay(day.date, today);
+    day.future = day.date > today;
     day.hovered = this.hoverDate ? isSameDay(day.date, this.hoverDate) : false;
     // call enabledDays
     day.disabled = !this.enabledDates(day.date); // Math.random() > 0.5;

@@ -305,7 +305,7 @@ describe('<lion-calendar>', () => {
     });
 
     describe('Day view', () => {
-      it('adds "current" modifier to current date (today)', async () => {
+      it('adds "today" attribute if date is today', async () => {
         const clock = sinon.useFakeTimers({ now: 976838400000 }); // new Date('2000/12/15')
 
         const el = await fixture(
@@ -314,12 +314,9 @@ describe('<lion-calendar>', () => {
           `,
         );
         const elObj = new CalendarObject(el);
-        expect(elObj.day(15).current).to.be.true;
+        expect(elObj.day(15).today).to.be.true;
 
-        expect(elObj.day(10).current).to.be.false;
-        expect(elObj.day(20).current).to.be.false;
-        // TODO: checkForAllDays does not work here?
-        // expect(elObj.checkForAllDays(d => d.current, [15])).to.equal(true);
+        expect(elObj.checkForAllDays(d => d.today, [15])).to.equal(true);
 
         clock.restore();
       });
@@ -785,7 +782,7 @@ describe('<lion-calendar>', () => {
         expect(cells[lastIndex - 3].el.textContent).not.to.equal('');
       });
 
-      it('sets aria-current="date" to current date(today) button', async () => {
+      it('sets aria-current="date" to todays button', async () => {
         const elObj = new CalendarObject(
           await fixture(
             html`
