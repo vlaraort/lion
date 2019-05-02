@@ -15,6 +15,8 @@ const defaultMonthLabels = [
   'December',
 ];
 
+// TODO: why so much logic in here? Isn't the goal of the _montsData and preprocessors to provide
+// in this?
 export function dayTemplate(
   day,
   {

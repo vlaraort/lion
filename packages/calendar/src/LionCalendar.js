@@ -12,6 +12,8 @@ import { monthTemplate } from './utils/monthTemplate.js';
 import { calendarStyles } from './calendarStyles.js';
 import { dayTemplate } from './utils/dayTemplate.js';
 
+import { AriaGridBehavior } from './aria/aria-grid-behavior.js';
+
 /**
  * @customElement
  */
@@ -40,13 +42,15 @@ export class LionCalendar extends LitElement {
        */
       enabledDates: { type: Function },
 
+      // TODO: call dayProcessor. The consumer shouldn't care that it is run before (hence 'pre')
+      // render. We could equally well call it postProcessor (after month table built), think
+      // processor is enough and clearer for consumer.
       dayPreprocessor: { type: Function },
 
       /**
        * Weekday that will be displayed in first column of month grid.
        * 0: sunday, 1: monday, 2: tuesday, 3: wednesday , 4: thursday, 5: friday, 6: saturday
        * Default is 0
-       * TODO: rename to platform standard like 'firstWeekday'? -> ask Misha
        */
       firstDayOfWeek: { type: Number },
       /**
@@ -102,6 +106,7 @@ export class LionCalendar extends LitElement {
     };
 
     // TODO: what is prependZero?
+    // Answer: meant for prepending day number < 10. This should be fixed in dayProcessor
     this.prependZero = true;
   }
 
@@ -118,11 +123,40 @@ export class LionCalendar extends LitElement {
     this._monthsData = this.createMonth();
   }
 
+<<<<<<< HEAD
   firstUpdated() {
     super.firstUpdated();
     this.__addEventDelegationForHoverDate();
   }
 
+=======
+
+  /**
+   * @override
+   * @param {Map} c - changed properties
+   */
+  updated(c) {
+    super.updated(c);
+
+    if(c.has('_monthsData')) {
+      this._addGridBehavior();
+    }
+  }
+
+  /**
+   * Every render, a new month is changed. Applies the aria grid behavior (keyboard interaction
+   * and aria attrs) to the currently active month grid.
+   * By separating the logic from the html template, we separate logic from markup
+   * (which makes the templates highly reusable and suitable to override on extension layers)
+   * and we reuse our logic AriaGridBehavior in multiple components needing role="grid"
+   */
+  _addGridBehavior() { // eslint-disable-line class-methods-use-this
+    console.log(this.shadowRoot.querySelector('[role="grid"]'));
+    this._ariaGrid = new AriaGridBehavior(this.shadowRoot.querySelector('[role="grid"]'));
+  }
+
+  // TODO: why public?
+>>>>>>> chore(calendar): keyboard behavior wip
   createMonth() {
     const month = createMonth(this.focusDate, { firstDayOfWeek: this.firstDayOfWeek });
     month.weeks.forEach((week, weeki) => {
@@ -140,6 +174,8 @@ export class LionCalendar extends LitElement {
     return month;
   }
 
+  // TODO: rename to _customDayPreprocessor. Confusing to give default preprocessor and custom
+  // similar names
   _dayPreprocessor(_day) {
     let day = _day;
     day.otherMonth = day.date.getMonth() !== this.focusDate.getMonth();
@@ -170,8 +206,12 @@ export class LionCalendar extends LitElement {
     this.focusDate = new Date(this.focusDate.setMonth(this.focusDate.getMonth() - 1));
   }
 
+  /**
+   * @override
+   */
   _requestUpdate(name, oldValue) {
     super._requestUpdate(name, oldValue);
+<<<<<<< HEAD
     const updateDataOn = [
       'minDate',
       'maxDate',
@@ -191,6 +231,28 @@ export class LionCalendar extends LitElement {
     }
 
     if (updateDataOn.includes(name) && this.connected) {
+=======
+    // const updateDataOn = ['minDate', 'maxDate', 'focusDate', 'selectedDate'];
+
+    // const map = {
+    //   selectedDate: () => this._selectedDateChanged(),
+    //   focusDate: () => this._focusDateChanged(),
+    // };
+    // if (map[name]) {
+    //   map[name]();
+    // }
+
+    if (name === 'selectedDate') {
+      this._selectedDateChanged();
+    } else
+    if (name === 'focusDate') {
+      this._focusDateChanged();
+    }
+
+    const updateDataOn = ['minDate', 'maxDate', 'focusDate', 'selectedDate'];
+    // TODO: why _monthsData.weeks check?
+    if (updateDataOn.includes(name) && this._monthsData.weeks) {
+>>>>>>> chore(calendar): keyboard behavior wip
       this._monthsData = this.createMonth();
     }
   }
@@ -202,6 +264,7 @@ export class LionCalendar extends LitElement {
 
   _selectedDateChanged() {
     this.focusDate = this.selectedDate;
+    // TODO: composed ?
     this.dispatchEvent(new CustomEvent('selected-date-changed', { bubbles: true }));
   }
 
@@ -211,11 +274,13 @@ export class LionCalendar extends LitElement {
     }
   }
 
+  // TODO: Why public? See no reason to override...
   isValidFocusDate(focusDate) {
     const processedDay = this._dayPreprocessor({ date: focusDate });
     return !processedDay.disabled;
   }
 
+<<<<<<< HEAD
   findBestValidFocusDateFor(focusDate) {
     const futureDate =
       this.minDate && this.minDate > focusDate ? new Date(this.minDate) : new Date(focusDate);
@@ -241,6 +306,12 @@ export class LionCalendar extends LitElement {
     throw new Error(
       `Could not find a valid focus date within +/- 3650 day for ${year}/${month}/${day}`,
     );
+=======
+  // TODO: Why public? See no reason to override...
+  // eslint-disable-next-line class-methods-use-this
+  findBestValidFocusDateFor() {
+    throw new Error('not yet implemented');
+>>>>>>> chore(calendar): keyboard behavior wip
   }
 
   headerTemplate() {
@@ -293,6 +364,8 @@ export class LionCalendar extends LitElement {
     return dayTemplate(...params);
   }
 
+  // TODO: why externaluze render fns? Goal of splitting up is making them
+  // overridable for sub classers. Also, same names is confusing
   monthTemplate() {
     return monthTemplate(this._monthsData, {
       monthsLabels: this._i18n.months,

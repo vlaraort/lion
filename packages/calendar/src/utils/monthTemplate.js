@@ -6,7 +6,7 @@ export function monthTemplate(
   { weekdaysShort, weekdays, monthsLabels, dayTemplate = defaultDayTemplate } = {},
 ) {
   return html`
-    <table role="grid" aria-readonly="true" class="calendar__grid" aria-labelledby="month_and_year">
+    <table role="grid" data-wrap-cols aria-readonly="true" class="calendar__grid" aria-labelledby="month_and_year">
       <thead id="calendar__thead">
         <tr>
           ${weekdaysShort.map(
