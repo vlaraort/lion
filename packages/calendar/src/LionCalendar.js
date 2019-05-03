@@ -68,6 +68,7 @@ export class LionCalendar extends LitElement {
        * The currently focused date in active viewport
        */
       focusDate: { type: Date },
+      centralDate: { type: Date },
       hoverDate: { type: Date },
       _monthsData: { type: Object },
     };
@@ -85,7 +86,9 @@ export class LionCalendar extends LitElement {
     this.weekdayHeaderNotation = 'short';
     this.locale = localize.locale;
     this.selectedDate = new Date();
-    this.focusDate = this.selectedDate;
+    this.centralDate = this.selectedDate;
+    /** @property {Date} */
+    this.focusDate = null;
     /** @property {Date} */
     this.hoverDate = null;
 
@@ -139,7 +142,7 @@ export class LionCalendar extends LitElement {
   }
 
   createMonth() {
-    const month = createMonth(this.focusDate, { firstDayOfWeek: this.firstDayOfWeek });
+    const month = createMonth(this.centralDate, { firstDayOfWeek: this.firstDayOfWeek });
     month.weeks.forEach((week, weeki) => {
       week.days.forEach((day, dayi) => {
         // eslint-disable-next-line no-unused-vars
@@ -148,18 +151,18 @@ export class LionCalendar extends LitElement {
       });
     });
 
-    this._nextMonthDisabled = this.maxDate && getFirstDayNextMonth(this.focusDate) > this.maxDate;
+    this._nextMonthDisabled = this.maxDate && getFirstDayNextMonth(this.centralDate) > this.maxDate;
     this._previousMonthDisabled =
-      this.minDate && getLastDayPreviousMonth(this.focusDate) < this.minDate;
+      this.minDate && getLastDayPreviousMonth(this.centralDate) < this.minDate;
 
     return month;
   }
 
-  modifyFocusDay(modify, { type = 'Date' } = {}) {
-    const tmpDate = new Date(this.focusDate);
+  modifyFocusDay(modify, { type = 'Date' } = {}, dateType = 'focusDate') {
+    const tmpDate = new Date(this.centralDate);
     tmpDate[`set${type}`](tmpDate[`get${type}`]() + modify);
 
-    this.focusDate = tmpDate;
+    this[dateType] = tmpDate;
   }
 
   // TODO: rename to _customDayPreprocessor. Confusing to give default preprocessor and custom
@@ -167,11 +170,12 @@ export class LionCalendar extends LitElement {
   _dayPreprocessor(_day) {
     let day = _day;
     const today = new Date();
-    day.previousMonth = day.date.getMonth() < this.focusDate.getMonth();
-    day.currentMonth = day.date.getMonth() === this.focusDate.getMonth();
-    day.nextMonth = day.date.getMonth() > this.focusDate.getMonth();
+    day.central = isSameDay(day.date, this.centralDate);
+    day.previousMonth = day.date.getMonth() < this.centralDate.getMonth();
+    day.currentMonth = day.date.getMonth() === this.centralDate.getMonth();
+    day.nextMonth = day.date.getMonth() > this.centralDate.getMonth();
     day.selected = isSameDay(day.date, this.selectedDate);
-    day.focused = isSameDay(day.date, this.focusDate);
+    day.focused = this.focusDate ? isSameDay(day.date, this.focusDate) : false;
     day.past = day.date < today;
     day.today = isSameDay(day.date, today);
     day.future = day.date > today;
@@ -205,18 +209,20 @@ export class LionCalendar extends LitElement {
   _requestUpdate(name, oldValue) {
     super._requestUpdate(name, oldValue);
     const updateDataOn = [
-      'minDate',
-      'maxDate',
+      'centralDate',
       'focusDate',
       'hoverDate',
+      'minDate',
+      'maxDate',
       'selectedDate',
       'enabledDates',
     ];
 
     const map = {
       selectedDate: () => this._selectedDateChanged(),
-      focusDate: () => this._focusDateChanged(),
+      centralDate: () => this._centralDateChanged(),
       enabledDates: () => this._enabledDatesChanged(),
+      focusDate: () => this._focusDateChanged(),
     };
     if (map[name]) {
       map[name]();
@@ -229,18 +235,24 @@ export class LionCalendar extends LitElement {
 
   _enabledDatesChanged() {
     // make sure focusDate is still valid
-    this._focusDateChanged();
+    this._centralDateChanged();
   }
 
   _selectedDateChanged() {
-    this.focusDate = this.selectedDate;
+    this.centralDate = this.selectedDate;
     // TODO: composed ?
     this.dispatchEvent(new CustomEvent('selected-date-changed', { bubbles: true }));
   }
 
+  _centralDateChanged() {
+    if (this.connected && !this.isValidDate(this.centralDate)) {
+      this.centralDate = this.findBestValidDateFor(this.centralDate);
+    }
+  }
+
   _focusDateChanged() {
-    if (this.connected && !this.isValidFocusDate(this.focusDate)) {
-      this.focusDate = this.findBestValidFocusDateFor(this.focusDate);
+    if (this.focusDate) {
+      this.centralDate = this.focusDate;
     }
   }
 
@@ -251,33 +263,32 @@ export class LionCalendar extends LitElement {
   }
 
   // TODO: Why public? See no reason to override...
-  isValidFocusDate(focusDate) {
-    const processedDay = this._dayPreprocessor({ date: focusDate });
+  isValidDate(date) {
+    const processedDay = this._dayPreprocessor({ date });
     return !processedDay.disabled;
   }
 
-  findBestValidFocusDateFor(focusDate) {
+  findBestValidDateFor(date) {
     const futureDate =
-      this.minDate && this.minDate > focusDate ? new Date(this.minDate) : new Date(focusDate);
-    const pastDate =
-      this.maxDate && this.maxDate < focusDate ? new Date(this.maxDate) : new Date(focusDate);
+      this.minDate && this.minDate > date ? new Date(this.minDate) : new Date(date);
+    const pastDate = this.maxDate && this.maxDate < date ? new Date(this.maxDate) : new Date(date);
 
     let i = 0;
     do {
       i += 1;
       futureDate.setDate(futureDate.getDate() + 1);
       pastDate.setDate(pastDate.getDate() - 1);
-      if (this.isValidFocusDate(futureDate)) {
+      if (this.isValidDate(futureDate)) {
         return futureDate;
       }
-      if (this.isValidFocusDate(pastDate)) {
+      if (this.isValidDate(pastDate)) {
         return pastDate;
       }
     } while (i < 3650);
 
-    const year = this.focusDate.getFullYear();
-    const month = this.focusDate.getMonth() + 1;
-    const day = this.focusDate.getDate();
+    const year = this.centralDate.getFullYear();
+    const month = this.centralDate.getMonth() + 1;
+    const day = this.centralDate.getDate();
     throw new Error(
       `Could not find a valid focus date within +/- 3650 day for ${year}/${month}/${day}`,
     );
@@ -293,7 +304,7 @@ export class LionCalendar extends LitElement {
           aria-live="polite"
           aria-atomic="true"
         >
-          ${this._i18n.months[this.focusDate.getMonth()]} ${this.focusDate.getFullYear()}
+          ${this._i18n.months[this.centralDate.getMonth()]} ${this.centralDate.getFullYear()}
         </h2>
         ${this.nextButtonTemplate()}
       </div>
@@ -338,7 +349,6 @@ export class LionCalendar extends LitElement {
   monthTemplate() {
     return monthTemplate(this._monthsData, {
       monthsLabels: this._i18n.months,
-      focusDate: this.focusDate,
       weekdaysShort: this._i18n.weekdaysShort,
       weekdays: this._i18n.weekdays,
       dayTemplate: this.dayTemplate,
@@ -404,6 +414,7 @@ export class LionCalendar extends LitElement {
 
   __addEventForKeyboardNavigation() {
     this.__keyNavigationEvent = this._days.addEventListener('keydown', ev => {
+      // let hasFocus = true;
       switch (ev.key) {
         case 'ArrowUp':
           this.modifyFocusDay(-7);
@@ -430,6 +441,9 @@ export class LionCalendar extends LitElement {
           } else {
             this.modifyFocusDay(-1, { type: 'Month' });
           }
+          break;
+        case 'Tab':
+          this.focusDate = null;
           break;
         // no default
       }

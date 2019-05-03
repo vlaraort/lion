@@ -73,4 +73,8 @@ export const calendarStyles = css`
   .calendar__day[next-month] > button {
     color: #ccc;
   }
+
+  button[tabindex='0'] {
+    border: 1px dotted green;
+  }
 `;

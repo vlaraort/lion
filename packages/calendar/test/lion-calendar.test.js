@@ -583,13 +583,13 @@ describe('<lion-calendar>', () => {
         });
       });
 
-      describe('Initial focus', () => {
-        it('focused date is based on "selectedDate"', async () => {
+      describe('Initial central', () => {
+        it('central date is based on "selectedDate"', async () => {
           const el = await fixture(html`
             <lion-calendar .selectedDate=${new Date('2019/06/15')}></lion-calendar>
           `);
           const elObj = new CalendarObject(el);
-          expect(elObj.focusedDayObj().monthday).to.equal(15);
+          expect(elObj.centralDayObj().monthday).to.equal(15);
         });
 
         it('initial focus is on today if no selected date is available', async () => {
@@ -599,7 +599,7 @@ describe('<lion-calendar>', () => {
             <lion-calendar></lion-calendar>
           `);
           const elObj = new CalendarObject(el);
-          expect(elObj.focusedDayObj().monthday).to.equal(15);
+          expect(elObj.centralDayObj().monthday).to.equal(15);
           clock.restore();
         });
 
@@ -610,11 +610,11 @@ describe('<lion-calendar>', () => {
             <lion-calendar .enabledDates="${d => d.getDate() > 16}"></lion-calendar>
           `);
           const elObj = new CalendarObject(el);
-          expect(elObj.focusedDayObj().monthday).to.equal(17);
+          expect(elObj.centralDayObj().monthday).to.equal(17);
 
           el.enabledDates = d => d.getDate() < 12;
           await el.updateCompleted;
-          expect(elObj.focusedDayObj().monthday).to.equal(11);
+          expect(elObj.centralDayObj().monthday).to.equal(11);
 
           clock.restore();
         });
@@ -626,7 +626,7 @@ describe('<lion-calendar>', () => {
             <lion-calendar .enabledDates="${d => d.getDate() !== 15}"></lion-calendar>
           `);
           const elObj = new CalendarObject(el);
-          expect(elObj.focusedDayObj().monthday).to.equal(16);
+          expect(elObj.centralDayObj().monthday).to.equal(16);
 
           clock.restore();
         });
@@ -637,9 +637,9 @@ describe('<lion-calendar>', () => {
           const el = await fixture(html`
             <lion-calendar .enabledDates="${d => d.getFullYear() >= 2010}"></lion-calendar>
           `);
-          expect(el.focusDate.getFullYear()).to.equal(2010);
-          expect(el.focusDate.getMonth()).to.equal(0);
-          expect(el.focusDate.getDate()).to.equal(1);
+          expect(el.centralDate.getFullYear()).to.equal(2010);
+          expect(el.centralDate.getMonth()).to.equal(0);
+          expect(el.centralDate.getDate()).to.equal(1);
 
           clock.restore();
         });
@@ -649,7 +649,7 @@ describe('<lion-calendar>', () => {
             <lion-calendar .enabledDates="${d => d.getFullYear() >= 2010}"></lion-calendar>
           `);
           try {
-            el.focusDate = new Date('1900/01/01');
+            el.centralDate = new Date('1900/01/01');
           } catch (e) {
             expect(e).to.be.instanceof(Error);
             expect(e.message).to.equal(

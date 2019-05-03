@@ -1,6 +1,7 @@
 export function createDay(
   date = new Date(),
   {
+    central = false,
     startOfWeek = false,
     selected = false,
     focused = false,
@@ -14,6 +15,7 @@ export function createDay(
   } = {},
 ) {
   return {
+    central,
     date,
     startOfWeek,
     selected,
