@@ -417,11 +417,11 @@ describe('<lion-calendar>', () => {
           const elObj = new CalendarObject(el);
           expect(elObj.monthHeading()).lightDom.to.equal('January 2001');
 
-          el.dispatchEvent(new KeyboardEvent('keydown', { key: 'PageUp' }));
+          el._days.dispatchEvent(new KeyboardEvent('keydown', { key: 'PageUp' }));
           await el.updateCompleted;
           expect(elObj.monthHeading()).lightDom.to.equal('December 2000');
 
-          el.dispatchEvent(new KeyboardEvent('keydown', { key: 'PageDown' }));
+          el._days.dispatchEvent(new KeyboardEvent('keydown', { key: 'PageDown' }));
           await el.updateCompleted;
           expect(elObj.monthHeading()).lightDom.to.equal('January 2001');
         });
@@ -433,11 +433,11 @@ describe('<lion-calendar>', () => {
           const elObj = new CalendarObject(el);
           expect(elObj.monthHeading()).lightDom.to.equal('January 2001');
 
-          el.dispatchEvent(new KeyboardEvent('keydown', { key: 'PageDown', altKey: true }));
+          el._days.dispatchEvent(new KeyboardEvent('keydown', { key: 'PageDown', altKey: true }));
           await el.updateCompleted;
           expect(elObj.monthHeading()).lightDom.to.equal('January 2002');
 
-          el.dispatchEvent(new KeyboardEvent('keydown', { key: 'PageUp', altKey: true }));
+          el._days.dispatchEvent(new KeyboardEvent('keydown', { key: 'PageUp', altKey: true }));
           await el.updateCompleted;
           expect(elObj.monthHeading()).lightDom.to.equal('January 2001');
         });
@@ -449,7 +449,7 @@ describe('<lion-calendar>', () => {
             `);
             const elObj = new CalendarObject(el);
 
-            el.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown' }));
+            el._days.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown' }));
             await el.updateCompleted;
             expect(elObj.focusedDayObj().monthday).to.equal(2 + 7);
           });
@@ -460,7 +460,7 @@ describe('<lion-calendar>', () => {
             `);
             const elObj = new CalendarObject(el);
 
-            el.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowUp' }));
+            el._days.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowUp' }));
             await el.updateCompleted;
             expect(elObj.focusedDayObj().monthday).to.equal(26); // of month before
           });
@@ -472,7 +472,7 @@ describe('<lion-calendar>', () => {
             `);
             const elObj = new CalendarObject(el);
 
-            el.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowLeft' }));
+            el._days.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowLeft' }));
             await el.updateCompleted;
             expect(elObj.focusedDayObj().monthday).to.equal(12 - 1);
           });
@@ -484,9 +484,23 @@ describe('<lion-calendar>', () => {
             `);
             const elObj = new CalendarObject(el);
 
-            el.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight' }));
+            el._days.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight' }));
             await el.updateCompleted;
             expect(elObj.focusedDayObj().monthday).to.equal(12 + 1);
+          });
+
+          it.skip('navigates (sets focus) to next selectable column item via [arrow right] key', async () => {
+            const el = await fixture(html`
+              <lion-calendar
+                .selectedDate="${new Date('2001/01/02')}"
+                .enabledDates=${day => day.date() !== 3 && day.date() !== 4}
+              ></lion-calendar>
+            `);
+            const elObj = new CalendarObject(el);
+
+            el._days.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight' }));
+            await el.updateCompleted;
+            expect(elObj.focusedDayObj().monthday).to.equal(5);
           });
 
           it('navigates (sets focus) to next row via [arrow right] key if last item in row', async () => {
@@ -496,7 +510,7 @@ describe('<lion-calendar>', () => {
             const elObj = new CalendarObject(el);
             expect(elObj.focusedDayObj().weekday).to.equal('Sat');
 
-            el.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight' }));
+            el._days.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight' }));
             await el.updateCompleted;
             expect(elObj.focusedDayObj().monthday).to.equal(6);
             expect(elObj.focusedDayObj().weekday).to.equal('Sun');
@@ -509,7 +523,7 @@ describe('<lion-calendar>', () => {
             const elObj = new CalendarObject(el);
             expect(elObj.focusedDayObj().weekday).to.equal('Sun');
 
-            el.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowLeft' }));
+            el._days.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowLeft' }));
             await el.updateCompleted;
             expect(elObj.focusedDayObj().monthday).to.equal(5);
             expect(elObj.focusedDayObj().weekday).to.equal('Sat');
@@ -522,7 +536,7 @@ describe('<lion-calendar>', () => {
             const elObj = new CalendarObject(el);
             expect(elObj.monthHeading()).lightDom.to.equal('December 2000');
 
-            el.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight' }));
+            el._days.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight' }));
             await el.updateCompleted;
             expect(elObj.monthHeading()).lightDom.to.equal('January 2001');
             expect(elObj.focusedDayObj().monthday).to.equal(1);
@@ -535,7 +549,7 @@ describe('<lion-calendar>', () => {
             const elObj = new CalendarObject(el);
             expect(elObj.monthHeading()).lightDom.to.equal('January 2001');
 
-            el.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowLeft' }));
+            el._days.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowLeft' }));
             await el.updateCompleted;
             expect(elObj.monthHeading()).lightDom.to.equal('December 2000');
             expect(elObj.focusedDayObj().monthday).to.equal(31);
@@ -548,7 +562,7 @@ describe('<lion-calendar>', () => {
             const elObj = new CalendarObject(el);
             expect(elObj.monthHeading()).lightDom.to.equal('December 2000');
 
-            el.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown' }));
+            el._days.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown' }));
             await el.updateCompleted;
             expect(elObj.monthHeading()).lightDom.to.equal('January 2001');
             expect(elObj.focusedDayObj().monthday).to.equal(6);
@@ -561,7 +575,7 @@ describe('<lion-calendar>', () => {
             const elObj = new CalendarObject(el);
             expect(elObj.monthHeading()).lightDom.to.equal('January 2001');
 
-            el.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowUp' }));
+            el._days.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowUp' }));
             await el.updateCompleted;
             expect(elObj.monthHeading()).lightDom.to.equal('December 2000');
             expect(elObj.focusedDayObj().monthday).to.equal(26);
