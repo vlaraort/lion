@@ -12,6 +12,7 @@ import { createMonth } from './utils/createMonth.js';
 import { monthTemplate } from './utils/monthTemplate.js';
 import { calendarStyles } from './calendarStyles.js';
 import { dayTemplate } from './utils/dayTemplate.js';
+import './utils/IE11differentKeyNamesShim.js';
 
 /**
  * @customElement
