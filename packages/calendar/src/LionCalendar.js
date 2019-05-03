@@ -242,6 +242,12 @@ export class LionCalendar extends LitElement {
     }
   }
 
+  updated(changed) {
+    if (changed.has('focusDate') && this.focusDate) {
+      this.shadowRoot.getElementById('focused-day-button').focus();
+    }
+  }
+
   // TODO: Why public? See no reason to override...
   isValidFocusDate(focusDate) {
     const processedDay = this._dayPreprocessor({ date: focusDate });
@@ -400,7 +406,8 @@ export class LionCalendar extends LitElement {
   }
 
   __addEventForKeyboardNavigation() {
-    this.addEventListener('keydown', ev => {
+    const days = this.shadowRoot.getElementById('calendar__days');
+    days.addEventListener('keydown', ev => {
       switch (ev.key) {
         case 'ArrowUp':
           this.modifyFocusDay(-7);

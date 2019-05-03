@@ -54,8 +54,9 @@ export function dayTemplate(
       .date=${day.date}
     >
       <button
+        id=${ifDefined(day.focused ? 'focused-day-button' : undefined)}
         class="calendar__day-button"
-        tabindex=${day.selected ? '0' : '-1'}
+        tabindex=${day.focused ? '0' : '-1'}
         aria-label=${`${dayNumber} ${monthName} ${year} ${weekDay}`}
         aria-selected=${day.selected ? 'true' : 'false'}
         aria-current=${ifDefined(day.today ? 'date' : undefined)}
