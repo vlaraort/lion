@@ -331,7 +331,7 @@ describe('<lion-calendar>', () => {
 
       it('adds "focused" modifier to focused date', async () => {
         const el = await fixture(html`
-          <lion-calendar .selectedDate="${new Date('2000/12/12')}"></lion-calendar>
+          <lion-calendar .focusDate="${new Date('2000/12/12')}"></lion-calendar>
         `);
         const elObj = new CalendarObject(el);
         expect(elObj.checkForAllDays(d => d.focused, [12])).to.equal(true);
@@ -491,11 +491,11 @@ describe('<lion-calendar>', () => {
             expect(elObj.focusedDayObj().monthday).to.equal(12 + 1);
           });
 
-          it.skip('navigates (sets focus) to next selectable column item via [arrow right] key', async () => {
+          it('navigates (sets focus) to next selectable column item via [arrow right] key', async () => {
             const el = await fixture(html`
               <lion-calendar
                 .selectedDate="${new Date('2001/01/02')}"
-                .enabledDates=${day => day.date() !== 3 && day.date() !== 4}
+                .enabledDates=${day => day.getDate() !== 3 && day.getDate() !== 4}
               ></lion-calendar>
             `);
             const elObj = new CalendarObject(el);
@@ -510,7 +510,7 @@ describe('<lion-calendar>', () => {
               <lion-calendar .selectedDate="${new Date('2019/01/05')}"></lion-calendar>
             `);
             const elObj = new CalendarObject(el);
-            expect(elObj.focusedDayObj().weekday).to.equal('Sat');
+            expect(elObj.centralDayObj().weekday).to.equal('Sat');
 
             el._days.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight' }));
             await el.updateComplete;
@@ -523,7 +523,7 @@ describe('<lion-calendar>', () => {
               <lion-calendar .selectedDate="${new Date('2019/01/06')}"></lion-calendar>
             `);
             const elObj = new CalendarObject(el);
-            expect(elObj.focusedDayObj().weekday).to.equal('Sun');
+            expect(elObj.centralDayObj().weekday).to.equal('Sun');
 
             el._days.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowLeft' }));
             await el.updateComplete;
@@ -586,7 +586,7 @@ describe('<lion-calendar>', () => {
       });
 
       describe('Initial central', () => {
-        it('central date is based on "selectedDate"', async () => {
+        it('is based on "selectedDate"', async () => {
           const el = await fixture(html`
             <lion-calendar .selectedDate=${new Date('2019/06/15')}></lion-calendar>
           `);
@@ -594,7 +594,7 @@ describe('<lion-calendar>', () => {
           expect(elObj.centralDayObj().monthday).to.equal(15);
         });
 
-        it('initial focus is on today if no selected date is available', async () => {
+        it('if today if no selected date is available', async () => {
           const clock = sinon.useFakeTimers({ now: 976838400000 }); // new Date('2000/12/15')
 
           const el = await fixture(html`
@@ -605,7 +605,7 @@ describe('<lion-calendar>', () => {
           clock.restore();
         });
 
-        it('initial focus is on day closest to today, if today (and surrounding dates) is/are disabled', async () => {
+        it('is on day closest to today, if today (and surrounding dates) is/are disabled', async () => {
           const clock = sinon.useFakeTimers({ now: 976838400000 }); // new Date('2000/12/15')
 
           const el = await fixture(html`
@@ -646,7 +646,7 @@ describe('<lion-calendar>', () => {
           clock.restore();
         });
 
-        it('throws if no valid date can be found within +/- 3650 days', async () => {
+        it('throws if no selectable date can be found within +/- 3650 days', async () => {
           const el = await fixture(html`
             <lion-calendar .enabledDates="${d => d.getFullYear() >= 2010}"></lion-calendar>
           `);
@@ -655,7 +655,7 @@ describe('<lion-calendar>', () => {
           } catch (e) {
             expect(e).to.be.instanceof(Error);
             expect(e.message).to.equal(
-              'Could not find a valid focus date within +/- 3650 day for 1900/1/1',
+              'Could not find a selectable date within +/- 3650 day for 1900/1/1',
             );
             return;
           }

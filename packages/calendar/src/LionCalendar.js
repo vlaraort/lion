@@ -153,6 +153,8 @@ export class LionCalendar extends LocalizeMixin(LitElement) {
     this.focusDate = null;
     /** @property {Date} */
     this.hoverDate = null;
+    this._firstUpdatedDone = false;
+    this._connectedCallbackDone = false;
 
     this._i18n = {
       weekdays: getWeekdayNames({
@@ -177,11 +179,10 @@ export class LionCalendar extends LocalizeMixin(LitElement) {
     // eslint-disable-next-line wc/guard-super-call
     super.connectedCallback();
 
-    // TODO: why public?
-    this.connected = true;
+    this._connectedCallbackDone = true;
 
-    // calculate correct focusDate based on user provided enabledDates
-    this.focusDate = this.selectedDate;
+    // calculate correct centralDate based on user provided enabledDates
+    this.centralDate = this.centralDate;
 
     // setup data for initial render
     this._monthsData = this.createMonth();
@@ -196,6 +197,7 @@ export class LionCalendar extends LocalizeMixin(LitElement) {
 
   firstUpdated() {
     super.firstUpdated();
+    this._firstUpdatedDone = true;
     this._days = this.shadowRoot.getElementById('calendar__days');
 
     this.__addEventDelegationForHoverDate();
@@ -218,13 +220,6 @@ export class LionCalendar extends LocalizeMixin(LitElement) {
       this.minDate && getLastDayPreviousMonth(this.centralDate) < this.minDate;
 
     return month;
-  }
-
-  modifyFocusDay(modify, { type = 'Date' } = {}, dateType = 'focusDate') {
-    const tmpDate = new Date(this.centralDate);
-    tmpDate[`set${type}`](tmpDate[`get${type}`]() + modify);
-
-    this[dateType] = tmpDate;
   }
 
   // TODO: rename to _customDayPreprocessor. Confusing to give default preprocessor and custom
@@ -258,11 +253,11 @@ export class LionCalendar extends LocalizeMixin(LitElement) {
   }
 
   _nextButtonClick() {
-    this.modifyFocusDay(1, { type: 'Month' });
+    this.modifyDate(1, { type: 'Month' });
   }
 
   _previousButtonClick() {
-    this.modifyFocusDay(-1, { type: 'Month' });
+    this.modifyDate(-1, { type: 'Month' });
   }
 
   /**
@@ -290,13 +285,13 @@ export class LionCalendar extends LocalizeMixin(LitElement) {
       map[name]();
     }
 
-    if (updateDataOn.includes(name) && this.connected) {
+    if (updateDataOn.includes(name) && this._connectedCallbackDone) {
       this._monthsData = this.createMonth();
     }
   }
 
   _enabledDatesChanged() {
-    // make sure focusDate is still valid
+    // make sure centralDate is still valid
     this._centralDateChanged();
   }
 
@@ -307,8 +302,8 @@ export class LionCalendar extends LocalizeMixin(LitElement) {
   }
 
   _centralDateChanged() {
-    if (this.connected && !this.isValidDate(this.centralDate)) {
-      this.centralDate = this.findBestValidDateFor(this.centralDate);
+    if (this._connectedCallbackDone && !this.isEnabledDate(this.centralDate)) {
+      this.centralDate = this.findBestEnabledDateFor(this.centralDate);
     }
   }
 
@@ -319,18 +314,26 @@ export class LionCalendar extends LocalizeMixin(LitElement) {
   }
 
   updated(changed) {
-    if (changed.has('focusDate') && this.focusDate) {
-      this.shadowRoot.getElementById('focused-day-button').focus();
+    if (this._firstUpdatedDone === true && changed.has('focusDate') && this.focusDate) {
+      const button = this.shadowRoot.getElementById('focused-day-button');
+      if (button) {
+        this.shadowRoot.getElementById('focused-day-button').focus();
+      }
     }
   }
 
   // TODO: Why public? See no reason to override...
-  isValidDate(date) {
+  isEnabledDate(date) {
     const processedDay = this._dayPreprocessor({ date });
     return !processedDay.disabled;
   }
 
-  findBestValidDateFor(date) {
+  /**
+   * @param {Date} date
+   * @param {Object} opts
+   * @param {String} [opts.mode] Find best date in `future/past/both`
+   */
+  findBestEnabledDateFor(date, { mode = 'both' } = {}) {
     const futureDate =
       this.minDate && this.minDate > date ? new Date(this.minDate) : new Date(date);
     const pastDate = this.maxDate && this.maxDate < date ? new Date(this.maxDate) : new Date(date);
@@ -338,21 +341,25 @@ export class LionCalendar extends LocalizeMixin(LitElement) {
     let i = 0;
     do {
       i += 1;
-      futureDate.setDate(futureDate.getDate() + 1);
-      pastDate.setDate(pastDate.getDate() - 1);
-      if (this.isValidDate(futureDate)) {
-        return futureDate;
+      if (mode === 'both' || mode === 'future') {
+        futureDate.setDate(futureDate.getDate() + 1);
+        if (this.isEnabledDate(futureDate)) {
+          return futureDate;
+        }
       }
-      if (this.isValidDate(pastDate)) {
-        return pastDate;
+      if (mode === 'both' || mode === 'past') {
+        pastDate.setDate(pastDate.getDate() - 1);
+        if (this.isEnabledDate(pastDate)) {
+          return pastDate;
+        }
       }
     } while (i < 3650);
 
-    const year = this.centralDate.getFullYear();
-    const month = this.centralDate.getMonth() + 1;
-    const day = this.centralDate.getDate();
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
     throw new Error(
-      `Could not find a valid focus date within +/- 3650 day for ${year}/${month}/${day}`,
+      `Could not find a selectable date within +/- 3650 day for ${year}/${month}/${day}`,
     );
   }
 
@@ -474,34 +481,44 @@ export class LionCalendar extends LocalizeMixin(LitElement) {
     this._days.removeEventListener('keydown', this.__keyNavigationEvent);
   }
 
+  modifyDate(modify, { type = 'Date', mode = 'future', dateType = 'centralDate' } = {}) {
+    let tmpDate = new Date(this.centralDate);
+    tmpDate[`set${type}`](tmpDate[`get${type}`]() + modify);
+
+    if (!this.isEnabledDate(tmpDate)) {
+      tmpDate = this.findBestEnabledDateFor(tmpDate, { mode });
+    }
+
+    this[dateType] = tmpDate;
+  }
+
   __addEventForKeyboardNavigation() {
     this.__keyNavigationEvent = this._days.addEventListener('keydown', ev => {
-      // let hasFocus = true;
       switch (ev.key) {
         case 'ArrowUp':
-          this.modifyFocusDay(-7);
+          this.modifyDate(-7, { dateType: 'focusDate', mode: 'past' });
           break;
         case 'ArrowDown':
-          this.modifyFocusDay(7);
+          this.modifyDate(7, { dateType: 'focusDate' });
           break;
         case 'ArrowLeft':
-          this.modifyFocusDay(-1);
+          this.modifyDate(-1, { dateType: 'focusDate', mode: 'past' });
           break;
         case 'ArrowRight':
-          this.modifyFocusDay(1);
+          this.modifyDate(1, { dateType: 'focusDate' });
           break;
         case 'PageDown':
           if (ev.altKey === true) {
-            this.modifyFocusDay(1, { type: 'FullYear' });
+            this.modifyDate(1, { dateType: 'focusDate', type: 'FullYear' });
           } else {
-            this.modifyFocusDay(1, { type: 'Month' });
+            this.modifyDate(1, { dateType: 'focusDate', type: 'Month' });
           }
           break;
         case 'PageUp':
           if (ev.altKey === true) {
-            this.modifyFocusDay(-1, { type: 'FullYear' });
+            this.modifyDate(-1, { dateType: 'focusDate', type: 'FullYear', mode: 'past' });
           } else {
-            this.modifyFocusDay(-1, { type: 'Month' });
+            this.modifyDate(-1, { dateType: 'focusDate', type: 'Month', mode: 'past' });
           }
           break;
         case 'Tab':
