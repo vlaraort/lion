@@ -265,13 +265,15 @@ describe('<lion-calendar>', () => {
       });
 
       describe('Accessibility', () => {
-        it('navigate buttons have a tooltip with accesible label', async () => {
+        it('navigate buttons have a aria-label and title attribute with accessible label', async () => {
           const el = await fixture(html`
             <lion-calendar .selectedDate="${new Date('2000/12/12')}"></lion-calendar>
           `);
           const elObj = new CalendarObject(el);
           expect(elObj.prevMonthButton().getAttribute('title')).to.equal('Previous month');
+          expect(elObj.prevMonthButton().getAttribute('aria-label')).to.equal('Previous month');
           expect(elObj.nextMonthButton().getAttribute('title')).to.equal('Next month');
+          expect(elObj.nextMonthButton().getAttribute('aria-label')).to.equal('Next month');
         });
       });
     });
@@ -808,19 +810,24 @@ describe('<lion-calendar>', () => {
   });
 
   describe('Localization', () => {
-    it.skip('displays the right translations according to locale', async () => {
-      // const el = await fixture(
-      //   html`
-      //     <lion-datepicker></lion-datepicker>
-      //   `,
-      // );
+    it('displays the right translations according to locale', async () => {
+      const el = await fixture(html`
+        <lion-calendar></lion-calendar>
+      `);
+
+      const elObj = new CalendarObject(el);
+      expect(elObj.nextMonthButton().getAttribute('aria-label')).to.equal('Next month');
+
+      localize.locale = 'nl-NL';
+      await el.updateComplete;
+      expect(elObj.nextMonthButton().getAttribute('aria-label')).to.equal('Volgende maand');
+
       /**
-       * translate:
+       * TODO: test translate:
        * - weekdays
        * - weekday abbreviations
        * - month names
        */
-      // TODO: First get translations from uic-date-input
     });
   });
 });

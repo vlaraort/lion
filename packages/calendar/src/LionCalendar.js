@@ -6,6 +6,7 @@ import {
   isSameDay,
   getFirstDayNextMonth,
   getLastDayPreviousMonth,
+  LocalizeMixin,
 } from '@lion/localize';
 import { createMonth } from './utils/createMonth.js';
 import { monthTemplate } from './utils/monthTemplate.js';
@@ -15,7 +16,68 @@ import { dayTemplate } from './utils/dayTemplate.js';
 /**
  * @customElement
  */
-export class LionCalendar extends LitElement {
+export class LionCalendar extends LocalizeMixin(LitElement) {
+  static get localizeNamespaces() {
+    return [
+      {
+        'lion-calendar': locale => {
+          switch (locale) {
+            case 'bg-BG':
+            case 'bg':
+              return import('../translations/bg.js');
+            case 'cs-CZ':
+            case 'cs':
+              return import('../translations/cs.js');
+            case 'de-AT':
+            case 'de-DE':
+            case 'de':
+              return import('../translations/de.js');
+            case 'en-AU':
+            case 'en-GB':
+            case 'en-US':
+            case 'en':
+              return import('../translations/en.js');
+            case 'es-ES':
+            case 'es':
+              return import('../translations/es.js');
+            case 'fr-FR':
+            case 'fr-BE':
+            case 'fr':
+              return import('../translations/fr.js');
+            case 'hu-HU':
+            case 'hu':
+              return import('../translations/hu.js');
+            case 'it-IT':
+            case 'it':
+              return import('../translations/it.js');
+            case 'nl-BE':
+            case 'nl-NL':
+            case 'nl':
+              return import('../translations/nl.js');
+            case 'pl-PL':
+            case 'pl':
+              return import('../translations/pl.js');
+            case 'ro-RO':
+            case 'ro':
+              return import('../translations/ro.js');
+            case 'ru-RU':
+            case 'ru':
+              return import('../translations/ru.js');
+            case 'sk-SK':
+            case 'sk':
+              return import('../translations/sk.js');
+            case 'uk-UA':
+            case 'uk':
+              return import('../translations/uk.js');
+            default:
+              throw new Error(`Unknown locale: ${locale}`);
+          }
+        },
+      },
+      ...super.localizeNamespaces,
+    ];
+  }
+
   static get styles() {
     return [calendarStyles];
   }
@@ -315,8 +377,8 @@ export class LionCalendar extends LitElement {
     return html`
       <button
         class="calendar__prev-month-button"
-        aria-label="Previous month"
-        title="Previous month"
+        aria-label=${this.msgLit('lion-calendar:previousMonth')}
+        title=${this.msgLit('lion-calendar:previousMonth')}
         @click=${this._previousButtonClick}
         ?disabled=${this._previousMonthDisabled}
       >
@@ -329,8 +391,8 @@ export class LionCalendar extends LitElement {
     return html`
       <button
         class="calendar__next-month-button"
-        aria-label="Next month"
-        title="Next month"
+        aria-label=${this.msgLit('lion-calendar:nextMonth')}
+        title=${this.msgLit('lion-calendar:nextMonth')}
         @click=${this._nextButtonClick}
         ?disabled=${this._nextMonthDisabled}
       >
