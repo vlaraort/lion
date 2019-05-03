@@ -131,6 +131,8 @@ export class LionCalendar extends LitElement {
 
   firstUpdated() {
     super.firstUpdated();
+    this._days = this.shadowRoot.getElementById('calendar__days');
+
     this.__addEventDelegationForHoverDate();
     this.__addEventDelegationForClickDate();
     this.__addEventForKeyboardNavigation();
@@ -353,11 +355,10 @@ export class LionCalendar extends LitElement {
 
   __addEventDelegationForHoverDate() {
     let timeout;
-    const calendar = this.shadowRoot.getElementById('calendar');
     const isDayOrButton = el =>
       el.classList.contains('calendar__day') || el.classList.contains('calendar__day-button');
 
-    this.__hoverDateDelegation = calendar.addEventListener('mouseover', ev => {
+    this.__hoverDateDelegation = this._days.addEventListener('mouseover', ev => {
       if (!timeout) {
         // if we don't pass on the parameters to setTimeout then ev.composedPath() becomes empty
         timeout = setTimeout(
@@ -376,9 +377,7 @@ export class LionCalendar extends LitElement {
       }
     });
 
-    const days = this.shadowRoot.getElementById('calendar__days');
-
-    this.__leaveEvent = days.addEventListener('mouseleave', () => {
+    this.__leaveDaysEvent = this._days.addEventListener('mouseleave', () => {
       setTimeout(() => {
         this.hoverDate = null;
       }, 16); // set after debounced event
@@ -388,26 +387,23 @@ export class LionCalendar extends LitElement {
   __addEventDelegationForClickDate() {
     const isDayOrButton = el =>
       el.classList.contains('calendar__day') || el.classList.contains('calendar__day-button');
-    this.__clickDateDelegation = this.shadowRoot
-      .getElementById('calendar')
-      .addEventListener('click', ev => {
-        const el = ev.composedPath()[0];
-        if (isDayOrButton(el)) {
-          this.selectedDate = el.date;
-        }
-      });
+    this.__clickDateDelegation = this._days.addEventListener('click', ev => {
+      const el = ev.composedPath()[0];
+      if (isDayOrButton(el)) {
+        this.selectedDate = el.date;
+      }
+    });
   }
 
   __removeEventDelegations() {
-    const calendar = this.shadowRoot.getElementById('calendar');
-    calendar.removeEventListener('mouseover', this.__hoverDateDelegation);
-    calendar.removeEventListener('mouseleave', this.__leaveEvent);
-    calendar.removeEventListener('click', this.__clickDateDelegation);
+    this._days.removeEventListener('mouseover', this.__hoverDateDelegation);
+    this._days.removeEventListener('mouseleave', this.__leaveDaysEvent);
+    this._days.removeEventListener('click', this.__clickDateDelegation);
+    this._days.removeEventListener('keydown', this.__keyNavigationEvent);
   }
 
   __addEventForKeyboardNavigation() {
-    const days = this.shadowRoot.getElementById('calendar__days');
-    days.addEventListener('keydown', ev => {
+    this.__keyNavigationEvent = this._days.addEventListener('keydown', ev => {
       switch (ev.key) {
         case 'ArrowUp':
           this.modifyFocusDay(-7);
