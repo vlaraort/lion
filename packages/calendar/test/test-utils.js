@@ -46,6 +46,10 @@ export class DayObject {
     return this.el.hasAttribute('focused');
   }
 
+  get central() {
+    return this.el.central;
+  }
+
   get hovered() {
     return this.el.hasAttribute('hovered');
   }
@@ -127,6 +131,10 @@ export class CalendarObject {
 
   focusedDay() {
     return this.focusedDay().el;
+  }
+
+  centralDayObj() {
+    return this.dayObjs().find(d => d.central);
   }
 
   /**

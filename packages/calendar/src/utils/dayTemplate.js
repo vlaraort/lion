@@ -51,12 +51,13 @@ export function dayTemplate(
       ?current-month=${day.currentMonth}
       .nextMonth=${day.nextMonth}
       ?next-month=${day.nextMonth}
+      .central=${day.central}
       .date=${day.date}
     >
       <button
         id=${ifDefined(day.focused ? 'focused-day-button' : undefined)}
         class="calendar__day-button"
-        tabindex=${day.focused ? '0' : '-1'}
+        tabindex=${day.central ? '0' : '-1'}
         aria-label=${`${dayNumber} ${monthName} ${year} ${weekDay}`}
         aria-selected=${day.selected ? 'true' : 'false'}
         aria-current=${ifDefined(day.today ? 'date' : undefined)}
