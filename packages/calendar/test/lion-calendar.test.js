@@ -6,6 +6,7 @@ import { localize } from '@lion/localize';
 import { localizeTearDown } from '@lion/localize/test-helpers.js';
 
 import { CalendarObject, DayObject } from './test-utils.js';
+import './keyboardEventShimIE.js';
 
 import '../lion-calendar.js';
 
