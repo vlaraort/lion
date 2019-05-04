@@ -8,8 +8,8 @@ import {
   getLastDayPreviousMonth,
   LocalizeMixin,
 } from '@lion/localize';
-import { createMonth } from './utils/createMonth.js';
-import { monthTemplate } from './utils/monthTemplate.js';
+import { createMultipleMonth } from './utils/createMultipleMonth.js';
+import { defaultDataTemplate } from './utils/defaultDataTemplate.js';
 import { calendarStyles } from './calendarStyles.js';
 import { dayTemplate } from './utils/dayTemplate.js';
 import './utils/differentKeyNamesShimIE.js';
@@ -140,7 +140,7 @@ export class LionCalendar extends LocalizeMixin(LitElement) {
   constructor() {
     super();
     // Defaults
-    this._monthsData = {};
+    this._data = {};
     this.minDate = null;
     this.maxDate = null;
     this.dayPreprocessor = day => day;
@@ -186,7 +186,7 @@ export class LionCalendar extends LocalizeMixin(LitElement) {
     this.centralDate = this.centralDate;
 
     // setup data for initial render
-    this._monthsData = this.createMonth();
+    this._data = this.createData();
   }
 
   disconnectedCallback() {
@@ -199,20 +199,25 @@ export class LionCalendar extends LocalizeMixin(LitElement) {
   firstUpdated() {
     super.firstUpdated();
     this._firstUpdatedDone = true;
-    this._days = this.shadowRoot.getElementById('calendar__days');
+    this._days = this.shadowRoot.getElementById('content');
 
     this.__addEventDelegationForHoverDate();
     this.__addEventDelegationForClickDate();
     this.__addEventForKeyboardNavigation();
   }
 
-  createMonth() {
-    const month = createMonth(this.centralDate, { firstDayOfWeek: this.firstDayOfWeek });
-    month.weeks.forEach((week, weeki) => {
-      week.days.forEach((day, dayi) => {
-        // eslint-disable-next-line no-unused-vars
-        let currentDay = month.weeks[weeki].days[dayi];
-        currentDay = this._dayPreprocessor(currentDay);
+  createData(options) {
+    const data = createMultipleMonth(this.centralDate, {
+      firstDayOfWeek: this.firstDayOfWeek,
+      ...options,
+    });
+    data.months.forEach((month, monthi) => {
+      month.weeks.forEach((week, weeki) => {
+        week.days.forEach((day, dayi) => {
+          // eslint-disable-next-line no-unused-vars
+          let currentDay = data.months[monthi].weeks[weeki].days[dayi];
+          currentDay = this._dayPreprocessor(currentDay);
+        });
       });
     });
 
@@ -220,7 +225,7 @@ export class LionCalendar extends LocalizeMixin(LitElement) {
     this._previousMonthDisabled =
       this.minDate && getLastDayPreviousMonth(this.centralDate) < this.minDate;
 
-    return month;
+    return data;
   }
 
   // TODO: rename to _customDayPreprocessor. Confusing to give default preprocessor and custom
@@ -287,7 +292,7 @@ export class LionCalendar extends LocalizeMixin(LitElement) {
     }
 
     if (updateDataOn.includes(name) && this._connectedCallbackDone) {
-      this._monthsData = this.createMonth();
+      this._data = this.createData();
     }
   }
 
@@ -416,8 +421,8 @@ export class LionCalendar extends LocalizeMixin(LitElement) {
 
   // TODO: why externaluze render fns? Goal of splitting up is making them
   // overridable for sub classers. Also, same names is confusing
-  monthTemplate() {
-    return monthTemplate(this._monthsData, {
+  dataTemplate() {
+    return defaultDataTemplate(this._data, {
       monthsLabels: this._i18n.months,
       weekdaysShort: this._i18n.weekdaysShort,
       weekdays: this._i18n.weekdays,
@@ -428,7 +433,7 @@ export class LionCalendar extends LocalizeMixin(LitElement) {
   render() {
     return html`
       <div id="calendar" class="calendar">
-        ${this.headerTemplate()} ${this.monthTemplate()}
+        ${this.headerTemplate()} ${this.dataTemplate()}
       </div>
     `;
   }
