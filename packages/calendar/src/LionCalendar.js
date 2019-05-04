@@ -13,6 +13,7 @@ import { defaultDataTemplate } from './utils/defaultDataTemplate.js';
 import { calendarStyles } from './calendarStyles.js';
 import { dayTemplate } from './utils/dayTemplate.js';
 import './utils/differentKeyNamesShimIE.js';
+import { createDay } from './utils/createDay.js';
 
 /**
  * @customElement
@@ -103,11 +104,6 @@ export class LionCalendar extends LocalizeMixin(LitElement) {
        */
       enabledDates: { type: Function },
 
-      // TODO: call dayProcessor. The consumer shouldn't care that it is run before (hence 'pre')
-      // render. We could equally well call it postProcessor (after month table built), think
-      // processor is enough and clearer for consumer.
-      dayPreprocessor: { type: Function },
-
       /**
        * Weekday that will be displayed in first column of month grid.
        * 0: sunday, 1: monday, 2: tuesday, 3: wednesday , 4: thursday, 5: friday, 6: saturday
@@ -133,7 +129,8 @@ export class LionCalendar extends LocalizeMixin(LitElement) {
       focusDate: { type: Date },
       centralDate: { type: Date },
       hoverDate: { type: Date },
-      _monthsData: { type: Object },
+
+      _data: { type: Object },
     };
   }
 
@@ -215,8 +212,11 @@ export class LionCalendar extends LocalizeMixin(LitElement) {
       month.weeks.forEach((week, weeki) => {
         week.days.forEach((day, dayi) => {
           // eslint-disable-next-line no-unused-vars
-          let currentDay = data.months[monthi].weeks[weeki].days[dayi];
-          currentDay = this._dayPreprocessor(currentDay);
+          const currentDay = data.months[monthi].weeks[weeki].days[dayi];
+          const currentMonth = data.months[monthi].weeks[0].days[6].date;
+          data.months[monthi].weeks[weeki].days[dayi] = this._coreDayProcessor(currentDay, {
+            currentMonth,
+          });
         });
       });
     });
@@ -230,13 +230,13 @@ export class LionCalendar extends LocalizeMixin(LitElement) {
 
   // TODO: rename to _customDayPreprocessor. Confusing to give default preprocessor and custom
   // similar names
-  _dayPreprocessor(_day) {
-    let day = _day;
+  _coreDayProcessor(_day, { currentMonth = false } = {}) {
+    const day = createDay(new Date(_day.date), _day);
     const today = new Date();
     day.central = isSameDay(day.date, this.centralDate);
-    day.previousMonth = day.date.getMonth() < this.centralDate.getMonth();
-    day.currentMonth = day.date.getMonth() === this.centralDate.getMonth();
-    day.nextMonth = day.date.getMonth() > this.centralDate.getMonth();
+    day.previousMonth = currentMonth && day.date.getMonth() < currentMonth.getMonth();
+    day.currentMonth = currentMonth && day.date.getMonth() === currentMonth.getMonth();
+    day.nextMonth = currentMonth && day.date.getMonth() > currentMonth.getMonth();
     day.selected = isSameDay(day.date, this.selectedDate);
     day.focused = this.focusDate ? isSameDay(day.date, this.focusDate) : false;
     day.past = day.date < today;
@@ -253,8 +253,6 @@ export class LionCalendar extends LocalizeMixin(LitElement) {
       day.disabled = true;
     }
 
-    // call custom dayPreprocessor
-    day = this.dayPreprocessor(day);
     return day;
   }
 
@@ -322,15 +320,13 @@ export class LionCalendar extends LocalizeMixin(LitElement) {
   updated(changed) {
     if (this._firstUpdatedDone === true && changed.has('focusDate') && this.focusDate) {
       const button = this.shadowRoot.getElementById('focused-day-button');
-      if (button) {
-        this.shadowRoot.getElementById('focused-day-button').focus();
-      }
+      button.focus();
     }
   }
 
   // TODO: Why public? See no reason to override...
   isEnabledDate(date) {
-    const processedDay = this._dayPreprocessor({ date });
+    const processedDay = this._coreDayProcessor({ date });
     return !processedDay.disabled;
   }
 
