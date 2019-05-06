@@ -23,7 +23,7 @@ export function dayTemplate(day, { weekdays, monthsLabels = defaultMonthLabels }
   const year = day.date.getFullYear();
   const weekdayName = weekdays[day.weekOrder];
   return html`
-    <td class="calendar__day-cell">
+    <td role="gridcell" class="calendar__day-cell">
       <button
         id=${ifDefined(day.focused ? 'focused-day-button' : undefined)}
         class="calendar__day-button"

@@ -17,10 +17,11 @@ export function defaultDataTemplate(
             aria-labelledby="month_and_year"
           >
             <thead id="calendar__thead">
-              <tr>
+              <tr role="row">
                 ${weekdaysShort.map(
                   (header, i) => html`
                     <th
+                      role="columnheader"
                       class="calendar__weekday-header"
                       scope="col"
                       aria-label="${weekdays[i]}"
@@ -35,7 +36,7 @@ export function defaultDataTemplate(
             <tbody>
               ${month.weeks.map(
                 week => html`
-                  <tr>
+                  <tr role="row">
                     ${week.days.map(day =>
                       dayTemplate(day, { weekdaysShort, weekdays, monthsLabels }),
                     )}
