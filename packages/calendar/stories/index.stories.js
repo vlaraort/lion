@@ -8,7 +8,7 @@ storiesOf('Calendar|Standalone', module)
     () => html`
       <style>
         .wrapper {
-          width: 300px;
+          display: inline-block;
           border: 1px solid #adadad;
           box-shadow: 0 0 16px #ccc;
         }
@@ -24,7 +24,7 @@ storiesOf('Calendar|Standalone', module)
     () => html`
       <style>
         .wrapper {
-          width: 300px;
+          display: inline-block;
           border: 1px solid #adadad;
           box-shadow: 0 0 16px #ccc;
         }
