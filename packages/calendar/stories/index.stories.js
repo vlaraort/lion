@@ -7,33 +7,30 @@ storiesOf('Calendar|Standalone', module)
     'default',
     () => html`
       <style>
-        .wrapper {
-          display: inline-block;
+        .calendar {
           border: 1px solid #adadad;
           box-shadow: 0 0 16px #ccc;
+          max-width: 500px;
         }
       </style>
 
-      <div class="wrapper">
-        <lion-calendar></lion-calendar>
-      </div>
+      <lion-calendar class="calendar"></lion-calendar>
     `,
   )
   .add(
     'disabled Sa, Su',
     () => html`
       <style>
-        .wrapper {
-          display: inline-block;
+        .calendar {
           border: 1px solid #adadad;
           box-shadow: 0 0 16px #ccc;
+          max-width: 500px;
         }
       </style>
 
-      <div class="wrapper">
-        <lion-calendar
-          .enabledDates=${day => day.getDay() !== 6 && day.getDay() !== 0}
-        ></lion-calendar>
-      </div>
+      <lion-calendar
+        class="calendar"
+        .enabledDates=${day => day.getDay() !== 6 && day.getDay() !== 0}
+      ></lion-calendar>
     `,
   );

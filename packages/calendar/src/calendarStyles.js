@@ -1,6 +1,10 @@
 import { css } from '@lion/core';
 
 export const calendarStyles = css`
+  :host {
+    display: block;
+  }
+
   .calendar {
     display: block;
   }
@@ -46,22 +50,7 @@ export const calendarStyles = css`
    */
 
   .calendar__day {
-  }
-
-  .calendar__day[selected] > button {
-    background: #ccc;
-  }
-
-  .calendar__day[focused] > button {
-    border: 1px solid #333;
-  }
-
-  .calendar__day[today] > button {
-    text-decoration: underline;
-  }
-
-  .calendar__day[hovered] > button {
-    border: 1px solid green;
+    text-align: center;
   }
 
   .calendar__day-button {
@@ -69,9 +58,38 @@ export const calendarStyles = css`
     border: 1px solid #fff;
   }
 
-  .calendar__day[previous-month] > button,
-  .calendar__day[next-month] > button {
-    color: #ccc;
+  .calendar__day-button:focus {
+    outline: none;
+  }
+
+  .calendar__day-button::-moz-focus-inner {
+    border: 0;
+  }
+
+  .calendar__day[today] .calendar__day-button {
+    text-decoration: underline;
+  }
+
+  .calendar__day[selected] .calendar__day-button {
+    background: #ccc;
+  }
+
+  .calendar__day[hovered] .calendar__day-button {
+    border: 1px solid green;
+  }
+
+  .calendar__day[focused] .calendar__day-button {
+    border: 1px solid #9ecaed;
+    box-shadow: 0 0 10px #9ecaed;
+  }
+
+  .calendar__day[disabled] .calendar__day-button {
+    color: #ddd;
+  }
+
+  .calendar__day[previous-month] .calendar__day-button,
+  .calendar__day[next-month] .calendar__day-button {
+    color: #eee;
   }
 
   button[tabindex='0'] {
