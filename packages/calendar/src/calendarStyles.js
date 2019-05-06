@@ -91,8 +91,4 @@ export const calendarStyles = css`
   .calendar__day[next-month] .calendar__day-button {
     color: #eee;
   }
-
-  button[tabindex='0'] {
-    border: 1px dotted green;
-  }
 `;
