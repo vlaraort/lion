@@ -6,8 +6,12 @@ import { dayTemplate } from '../../src/utils/dayTemplate.js';
 
 describe('dayTemplate', () => {
   it('renders day cell', async () => {
-    const day = createDay(new Date('2019/04/19'));
-    const el = await fixture(dayTemplate(day));
+    const day = createDay(new Date('2019/04/19'), { weekOrder: 5 });
+    const el = await fixture(
+      dayTemplate(day, {
+        weekdays: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+      }),
+    );
     expect(el).dom.to.equal(`
       <td class="calendar__day">
         <button

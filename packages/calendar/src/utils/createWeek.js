@@ -21,6 +21,7 @@ export function createWeek(date, { firstDayOfWeek = 0 } = {}) {
     }
     week.days.push(
       createDay(new Date(weekStartDate), {
+        weekOrder: i,
         startOfWeek: i === 0,
       }),
     );

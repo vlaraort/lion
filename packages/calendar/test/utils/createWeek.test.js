@@ -16,13 +16,13 @@ describe('createWeek', () => {
     expect(compareWeek(createWeek(new Date('2018/12/30')))).to.deep.equal(
       compareWeek({
         days: [
-          createDay(new Date('2018/12/30'), { startOfWeek: true }),
-          createDay(new Date('2018/12/31')),
-          createDay(new Date('2019/01/01')),
-          createDay(new Date('2019/01/02')),
-          createDay(new Date('2019/01/03')),
-          createDay(new Date('2019/01/04')),
-          createDay(new Date('2019/01/05')),
+          createDay(new Date('2018/12/30'), { weekOrder: 0, startOfWeek: true }),
+          createDay(new Date('2018/12/31'), { weekOrder: 1 }),
+          createDay(new Date('2019/01/01'), { weekOrder: 2 }),
+          createDay(new Date('2019/01/02'), { weekOrder: 3 }),
+          createDay(new Date('2019/01/03'), { weekOrder: 4 }),
+          createDay(new Date('2019/01/04'), { weekOrder: 5 }),
+          createDay(new Date('2019/01/05'), { weekOrder: 6 }),
         ],
       }),
     );
@@ -33,13 +33,13 @@ describe('createWeek', () => {
     expect(compareWeek(createWeek(new Date('2018/12/31'), { firstDayOfWeek: 1 }))).to.deep.equal(
       compareWeek({
         days: [
-          createDay(new Date('2018/12/31'), { startOfWeek: true }),
-          createDay(new Date('2019/01/01')),
-          createDay(new Date('2019/01/02')),
-          createDay(new Date('2019/01/03')),
-          createDay(new Date('2019/01/04')),
-          createDay(new Date('2019/01/05')),
-          createDay(new Date('2019/01/06')),
+          createDay(new Date('2018/12/31'), { weekOrder: 0, startOfWeek: true }),
+          createDay(new Date('2019/01/01'), { weekOrder: 1 }),
+          createDay(new Date('2019/01/02'), { weekOrder: 2 }),
+          createDay(new Date('2019/01/03'), { weekOrder: 3 }),
+          createDay(new Date('2019/01/04'), { weekOrder: 4 }),
+          createDay(new Date('2019/01/05'), { weekOrder: 5 }),
+          createDay(new Date('2019/01/06'), { weekOrder: 6 }),
         ],
       }),
     );

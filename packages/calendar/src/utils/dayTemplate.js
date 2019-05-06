@@ -17,17 +17,11 @@ const defaultMonthLabels = [
 
 // TODO: why so much logic in here? Isn't the goal of the _montsData and preprocessors to provide
 // in this?
-export function dayTemplate(
-  day,
-  {
-    weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
-    monthsLabels = defaultMonthLabels,
-  } = {},
-) {
+export function dayTemplate(day, { weekdays, monthsLabels = defaultMonthLabels } = {}) {
   const dayNumber = day.date.getDate();
   const monthName = monthsLabels[day.date.getMonth()];
   const year = day.date.getFullYear();
-  const weekDay = weekdays[day.date.getDay()];
+  const weekdayName = weekdays[day.weekOrder];
   return html`
     <td
       class="calendar__day"
@@ -58,7 +52,7 @@ export function dayTemplate(
         id=${ifDefined(day.focused ? 'focused-day-button' : undefined)}
         class="calendar__day-button"
         tabindex=${day.central ? '0' : '-1'}
-        aria-label=${`${dayNumber} ${monthName} ${year} ${weekDay}`}
+        aria-label=${`${dayNumber} ${monthName} ${year} ${weekdayName}`}
         aria-selected=${day.selected ? 'true' : 'false'}
         aria-current=${ifDefined(day.today ? 'date' : undefined)}
         ?disabled=${day.disabled || day.otherMonth}
