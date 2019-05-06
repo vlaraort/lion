@@ -154,20 +154,6 @@ export class LionCalendar extends LocalizeMixin(LitElement) {
     this._firstUpdatedDone = false;
     this._connectedCallbackDone = false;
 
-    this._i18n = {
-      weekdays: getWeekdayNames({
-        locale: this.locale || localize.locale,
-        style: 'long',
-        firstDayOfWeek: this.firstDayOfWeek,
-      }),
-      weekdaysShort: getWeekdayNames({
-        locale: this.locale || localize.locale,
-        style: this.weekdayHeaderNotation,
-        firstDayOfWeek: this.firstDayOfWeek,
-      }),
-      months: getMonthNames({ locale: this.locale || localize.locale }),
-    };
-
     // TODO: what is prependZero?
     // Answer: meant for prepending day number < 10. This should be fixed in dayProcessor
     this.prependZero = true;
@@ -375,7 +361,8 @@ export class LionCalendar extends LocalizeMixin(LitElement) {
           aria-live="polite"
           aria-atomic="true"
         >
-          ${this._i18n.months[this.centralDate.getMonth()]} ${this.centralDate.getFullYear()}
+          ${getMonthNames({ locale: this.__getLocale() })[this.centralDate.getMonth()]}
+          ${this.centralDate.getFullYear()}
         </h2>
         ${this.nextButtonTemplate()}
       </div>
@@ -419,9 +406,17 @@ export class LionCalendar extends LocalizeMixin(LitElement) {
   // overridable for sub classers. Also, same names is confusing
   dataTemplate() {
     return defaultDataTemplate(this._data, {
-      monthsLabels: this._i18n.months,
-      weekdaysShort: this._i18n.weekdaysShort,
-      weekdays: this._i18n.weekdays,
+      monthsLabels: getMonthNames({ locale: this.__getLocale() }),
+      weekdaysShort: getWeekdayNames({
+        locale: this.__getLocale(),
+        style: this.weekdayHeaderNotation,
+        firstDayOfWeek: this.firstDayOfWeek,
+      }),
+      weekdays: getWeekdayNames({
+        locale: this.__getLocale(),
+        style: 'long',
+        firstDayOfWeek: this.firstDayOfWeek,
+      }),
       dayTemplate: this.dayTemplate,
     });
   }
@@ -529,5 +524,9 @@ export class LionCalendar extends LocalizeMixin(LitElement) {
         // no default
       }
     });
+  }
+
+  __getLocale() {
+    return this.locale || localize.locale;
   }
 }
