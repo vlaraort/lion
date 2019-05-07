@@ -63,9 +63,13 @@ function rewriteLinksInMdContent(mdContent, filePath, cfg = rewriteLinksConfig) 
     let newHref = href;
     const isRelativeUrlPattern = /^(\.\/|\.\.\/)/; // starts with './' or '../'
     if (href.match(isRelativeUrlPattern)) {
-      // For instance 'packages/my-component/docs/myClass.md'
-      const relativeFromRootPath = filePath.replace(cfg.monorepoRootPath, '');
-      newHref = cfg.githubPath + relativeFromRootPath.slice(1);
+      const fileFolder = filePath.replace(/(.*\/).*/g, '$1');
+      const absoluteLocalPath = path.resolve(fileFolder, href);
+      // relativeFromRootPath: for instance 'packages/my-component/docs/' when
+      // filePath is 'path/to/repo/packages/my-component/docs/myDoc.md'
+      const relativeFromRootPath = absoluteLocalPath.replace(cfg.monorepoRootPath, '').slice(1);
+      // newRoot: https://github.com/ing-bank/lion/blob/master/packages/my-component/docs/
+      newHref = cfg.githubPath + relativeFromRootPath;
     }
     return newHref;
   };
@@ -76,12 +80,12 @@ function rewriteLinksInMdContent(mdContent, filePath, cfg = rewriteLinksConfig) 
 
   const resultLinks = [];
   // /^!?\[(label)\]\(href(?:\s+(title))?\s*\)/
-  const linkPattern = /!?\[(.*)\]\(([^|\s]*)(?:\s+(.*))?\s*\)/;
+  const linkPattern = '!?\\[(.*)\\]\\(([^|\\s]*)( +(.*))?\\s*\\)'; // eslint-disable-line
   const matches = mdContent.match(new RegExp(linkPattern, 'g')) || [];
 
   matches.forEach(link => {
     let newLink = '';
-    const parts = link.match(linkPattern);
+    const parts = link.match(new RegExp(linkPattern));
     if (parts) {
       newLink = mdLink(parts[2], parts[3], parts[1]);
     }
@@ -89,13 +93,11 @@ function rewriteLinksInMdContent(mdContent, filePath, cfg = rewriteLinksConfig) 
   });
 
   // Now that we have our rewritten links, stitch back together the desired result
-  const tokenPattern = /!?\[.*\]\([^|\s]*(?:\s+.*)?\s*\)/;
+  const tokenPattern = /!?\[.*\]\([^|\s]*(?: +.*)?\s*\)/;
   const tokens = mdContent.split(new RegExp(tokenPattern, 'g'));
   const resultTokens = [];
   tokens.forEach((token, i) => {
-    if (resultLinks[i]) {
-      resultTokens.push(token + resultLinks[i]);
-    }
+    resultTokens.push(token + (resultLinks[i] || ''));
   });
   const resultContent = resultTokens.join('');
   return resultContent;
@@ -105,7 +107,7 @@ function rewriteLinksInMdContent(mdContent, filePath, cfg = rewriteLinksConfig) 
  * Main code
  */
 function main({ dryRun } = { dryRun: false }) {
-  const mdFilePaths = gatherFilesFromDir(process.cwd()); // [path.resolve(__dirname, '../', 'packages/field/docs/FormatMixin.md')];
+  const mdFilePaths = gatherFilesFromDir(process.cwd()); // [path.resolve(__dirname, '../', 'packages/field/README.md')];
   mdFilePaths.forEach(filePath => {
     const content = fs.readFileSync(filePath).toString();
     const rewrittenContent = rewriteLinksInMdContent(content, filePath);
@@ -117,5 +119,4 @@ function main({ dryRun } = { dryRun: false }) {
     }
   });
 }
-
 module.exports = main;
