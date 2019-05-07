@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 // insert headers in README.md
 require('./insert-header.js');
 

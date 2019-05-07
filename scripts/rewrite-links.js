@@ -113,7 +113,7 @@ function main({ dryRun } = { dryRun: false }) {
       console.log(`== output for filePath '${filePath}' ===`); // eslint-disable-line no-console
       console.log(rewrittenContent); // eslint-disable-line no-console
     } else {
-      fs.writeFileSync(rewrittenContent);
+      fs.writeFileSync(filePath, rewrittenContent);
     }
   });
 }
