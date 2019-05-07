@@ -595,7 +595,7 @@ describe('<lion-calendar>', () => {
           expect(elObj.centralDayObj().monthday).to.equal(15);
         });
 
-        it('if today if no selected date is available', async () => {
+        it('is today if no selected date is available', async () => {
           const clock = sinon.useFakeTimers({ now: 976838400000 }); // new Date('2000/12/15')
 
           const el = await fixture(html`
