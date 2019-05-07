@@ -20,14 +20,13 @@ export const calendarStyles = css`
     margin: 0.5em 0;
   }
 
-  .calendar__prev-month-button {
-    background-color: #fff;
-    border: 0 none;
-  }
-
+  .calendar__prev-month-button,
   .calendar__next-month-button {
     background-color: #fff;
-    border: 0 none;
+    border: 0;
+    padding: 0;
+    min-width: 40px;
+    min-height: 40px;
   }
 
   .calendar__grid {
