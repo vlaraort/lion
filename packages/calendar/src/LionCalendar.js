@@ -223,7 +223,7 @@ export class LionCalendar extends LocalizeMixin(LitElement) {
     day.previousMonth = currentMonth && day.date.getMonth() < currentMonth.getMonth();
     day.currentMonth = currentMonth && day.date.getMonth() === currentMonth.getMonth();
     day.nextMonth = currentMonth && day.date.getMonth() > currentMonth.getMonth();
-    day.selected = isSameDay(day.date, this.selectedDate);
+    day.selected = this.selectedDate ? isSameDay(day.date, this.selectedDate) : false;
     day.focused = this.focusDate ? isSameDay(day.date, this.focusDate) : false;
     day.past = day.date < today;
     day.today = isSameDay(day.date, today);
