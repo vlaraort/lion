@@ -41,15 +41,7 @@ export const calendarStyles = css`
   .calendar__weekday-header {
   }
 
-  /**
-   * Note there are ".calendar__day"s and ".calendar__day-button"s
-   * - days should be put on role="cell" (td) elements
-   * - day-buttons should be put on role="button" (button) elements
-   * - Note that the day contains all states(for styling purposes) and the day-button
-   * contains all aria states (aria-current, aria-selected, tabindex etc.)
-   */
-
-  .calendar__day {
+  .calendar__day-cell {
     text-align: center;
   }
 
@@ -66,29 +58,29 @@ export const calendarStyles = css`
     border: 0;
   }
 
-  .calendar__day[today] .calendar__day-button {
+  .calendar__day-button[today] {
     text-decoration: underline;
   }
 
-  .calendar__day[selected] .calendar__day-button {
+  .calendar__day-button[selected] {
     background: #ccc;
   }
 
-  .calendar__day[hovered] .calendar__day-button {
+  .calendar__day-button[hovered] {
     border: 1px solid green;
   }
 
-  .calendar__day[focused] .calendar__day-button {
+  .calendar__day-button[focused] {
     border: 1px solid #9ecaed;
     box-shadow: 0 0 10px #9ecaed;
   }
 
-  .calendar__day[disabled] .calendar__day-button {
+  .calendar__day-button[disabled] {
     color: #ddd;
   }
 
-  .calendar__day[previous-month] .calendar__day-button,
-  .calendar__day[next-month] .calendar__day-button {
+  .calendar__day-button[previous-month],
+  .calendar__day-button[next-month] {
     color: #eee;
   }
 `;

@@ -23,31 +23,7 @@ export function dayTemplate(day, { weekdays, monthsLabels = defaultMonthLabels }
   const year = day.date.getFullYear();
   const weekdayName = weekdays[day.weekOrder];
   return html`
-    <td
-      class="calendar__day"
-      .disabled=${day.disabled}
-      ?disabled=${day.disabled}
-      .selected=${day.selected}
-      ?selected=${day.selected}
-      .focused=${day.focused}
-      ?focused=${day.focused}
-      .hovered=${day.hovered}
-      ?hovered=${day.hovered}
-      .past=${day.past}
-      ?past=${day.past}
-      .today=${day.today}
-      ?today=${day.today}
-      .future=${day.future}
-      ?future=${day.future}
-      .previousMonth=${day.previousMonth}
-      ?previous-month=${day.previousMonth}
-      .currentMonth=${day.currentMonth}
-      ?current-month=${day.currentMonth}
-      .nextMonth=${day.nextMonth}
-      ?next-month=${day.nextMonth}
-      .central=${day.central}
-      .date=${day.date}
-    >
+    <td class="calendar__day-cell">
       <button
         id=${ifDefined(day.focused ? 'focused-day-button' : undefined)}
         class="calendar__day-button"
@@ -55,7 +31,27 @@ export function dayTemplate(day, { weekdays, monthsLabels = defaultMonthLabels }
         aria-label=${`${dayNumber} ${monthName} ${year} ${weekdayName}`}
         aria-selected=${day.selected ? 'true' : 'false'}
         aria-current=${ifDefined(day.today ? 'date' : undefined)}
-        ?disabled=${day.disabled || day.otherMonth}
+        .disabled=${day.disabled}
+        ?disabled=${day.disabled}
+        .selected=${day.selected}
+        ?selected=${day.selected}
+        .focused=${day.focused}
+        ?focused=${day.focused}
+        .hovered=${day.hovered}
+        ?hovered=${day.hovered}
+        .past=${day.past}
+        ?past=${day.past}
+        .today=${day.today}
+        ?today=${day.today}
+        .future=${day.future}
+        ?future=${day.future}
+        .previousMonth=${day.previousMonth}
+        ?previous-month=${day.previousMonth}
+        .currentMonth=${day.currentMonth}
+        ?current-month=${day.currentMonth}
+        .nextMonth=${day.nextMonth}
+        ?next-month=${day.nextMonth}
+        .central=${day.central}
         .date=${day.date}
       >
         ${day.date.getDate()}
