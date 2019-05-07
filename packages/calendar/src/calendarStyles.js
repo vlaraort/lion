@@ -17,10 +17,7 @@ export const calendarStyles = css`
   }
 
   .calendar__month-heading {
-    display: flex;
-    justify-content: space-between;
-    border-bottom: 1px solid #adadad;
-    padding: 0 8px;
+    margin: 0.5em 0;
   }
 
   .calendar__prev-month-button {
@@ -47,15 +44,10 @@ export const calendarStyles = css`
 
   .calendar__day-button {
     background-color: #fff;
-    border: 1px solid #fff;
-  }
-
-  .calendar__day-button:focus {
-    outline: none;
-  }
-
-  .calendar__day-button::-moz-focus-inner {
     border: 0;
+    padding: 0;
+    min-width: 40px;
+    min-height: 40px;
   }
 
   .calendar__day-button[today] {
@@ -66,21 +58,18 @@ export const calendarStyles = css`
     background: #ccc;
   }
 
-  .calendar__day-button[hovered] {
-    border: 1px solid green;
-  }
-
-  .calendar__day-button[focused] {
-    border: 1px solid #9ecaed;
-    box-shadow: 0 0 10px #9ecaed;
-  }
-
-  .calendar__day-button[disabled] {
+  .calendar__day-button[previous-month],
+  .calendar__day-button[next-month] {
     color: #ddd;
   }
 
-  .calendar__day-button[previous-month],
-  .calendar__day-button[next-month] {
+  .calendar__day-button:hover {
+    outline: 1px solid green;
+  }
+
+  .calendar__day-button[disabled] {
+    background-color: #fff;
     color: #eee;
+    outline: none;
   }
 `;
