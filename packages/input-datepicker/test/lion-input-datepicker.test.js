@@ -3,15 +3,15 @@
 // TODO: enable linting again when proper imports can be done
 /* eslint-disable */
 import { expect, fixture } from '@open-wc/testing';
-import { localizeTearDown } from '../../localize/test-helpers.js';
-import { html } from '../../core/lit-html.js';
-import { ModalDialogController } from '../../overlays/ModalDialogController.js';
+import { localizeTearDown } from '@lion/localize/test-helpers.js';
+import { html } from '@lion/core';
+import { ModalDialogController } from '@lion/overlays';
 import {
   enabledDatesValidator,
   maxDateValidator,
   minDateValidator,
   minMaxDateValidator,
-} from '../../validate/validators.js';
+} from '@lion/validate';
 class DatepickerInputObject {
   constructor(el) {
     this.el = el;
